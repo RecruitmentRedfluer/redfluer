@@ -1,15 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/layout/Layout';
 import Hero from '../components/sections/home/Hero';
 import StatsStrip from '../components/sections/home/StatsStrip';
-import { jobListings } from '../data/jobListings';
 import JobCard from '../components/ui/JobCard';
 import SearchFilters from '../components/ui/SearchFilters';
 import Button from '../components/ui/Button';
+import { supabase } from '../lib/supabase';
 
 const Home: React.FC = () => {
-  const featuredJobs = jobListings.slice(0, 3);
+  const [featuredJobs, setFeaturedJobs] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
+  useEffect(() => {
+    const fetchFeaturedJobs = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('job_postings')
+          .select('*')
+          .eq('is_active', true)
+          .gt('expires_at', new Date().toISOString())
+          .order('posted_date', { ascending: false })
+          .limit(3);
+
+        if (error) throw error;
+        setFeaturedJobs(data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load jobs');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFeaturedJobs();
+  }, []);
+
   const handleSearch = (filters: any) => {
     console.log('Search filters:', filters);
     // In a real app, this would filter jobs or redirect to search results
@@ -60,9 +85,17 @@ const Home: React.FC = () => {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {featuredJobs.map(job => (
-                  <JobCard key={job.id} job={job} />
-                ))}
+                {isLoading ? (
+                  <div className="col-span-3 text-center py-8">Loading featured jobs...</div>
+                ) : error ? (
+                  <div className="col-span-3 text-center text-red-600 py-8">{error}</div>
+                ) : featuredJobs.length === 0 ? (
+                  <div className="col-span-3 text-center py-8">No featured jobs available at the moment.</div>
+                ) : (
+                  featuredJobs.map(job => (
+                    <JobCard key={job.id} job={job} />
+                  ))
+                )}
               </div>
             </div>
           </div>
