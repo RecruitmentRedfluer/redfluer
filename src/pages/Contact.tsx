@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '../components/layout/Layout';
 import ContactForm from '../components/ui/ContactForm';
+import GoogleMap from '../components/ui/GoogleMap';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 
 const Contact: React.FC = () => {
@@ -61,10 +62,10 @@ const Contact: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Map Placeholder */}
-                <div className="mt-8 bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-                  <p className="text-gray-600">Interactive Map Would Be Embedded Here</p>
-                </div>
+                <GoogleMap 
+                  address="123 Healthcare Avenue, London, EC1 2NP, UK"
+                  className="mt-8"
+                />
               </div>
               
               {/* Contact Form */}
