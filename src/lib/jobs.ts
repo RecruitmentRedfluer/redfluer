@@ -1,11 +1,31 @@
 import { supabase } from './supabase';
 import type { JobPosting } from '../types';
 
+// Helper function to convert snake_case to camelCase
+function toCamelCase(str: string): string {
+  return str.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+}
+
+// Helper function to transform object keys from snake_case to camelCase
+function transformKeys(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(transformKeys);
+  }
+  if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj).reduce((acc, key) => {
+      const camelKey = toCamelCase(key);
+      acc[camelKey] = transformKeys(obj[key]);
+      return acc;
+    }, {} as any);
+  }
+  return obj;
+}
+
 export async function getJobs(filters?: {
   keyword?: string;
   location?: string;
   role?: string;
-  contract_type?: string;
+  contractType?: string;
 }) {
   let query = supabase
     .from('job_postings')
@@ -25,8 +45,8 @@ export async function getJobs(filters?: {
     query = query.eq('role', filters.role);
   }
 
-  if (filters?.contract_type) {
-    query = query.eq('contract_type', filters.contract_type);
+  if (filters?.contractType) {
+    query = query.eq('contract_type', filters.contractType);
   }
 
   const { data, error } = await query;
@@ -36,7 +56,7 @@ export async function getJobs(filters?: {
     throw error;
   }
 
-  return data as JobPosting[];
+  return transformKeys(data) as JobPosting[];
 }
 
 export async function getJobById(id: string) {
@@ -51,5 +71,5 @@ export async function getJobById(id: string) {
     throw error;
   }
 
-  return data as JobPosting;
+  return transformKeys(data) as JobPosting;
 }

@@ -89,7 +89,7 @@ const JobDetail: React.FC = () => {
                   {job.title}
                 </h1>
                 <span className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium">
-                  {job.contract_type.charAt(0).toUpperCase() + job.contract_type.slice(1)}
+                  {job.contractType.charAt(0).toUpperCase() + job.contractType.slice(1)}
                 </span>
               </div>
               
@@ -106,13 +106,13 @@ const JobDetail: React.FC = () => {
                 
                 <div className="flex items-center text-gray-600">
                   <Clock className="h-5 w-5 mr-2 text-primary-500" />
-                  <span>Posted {formatDate(job.posted_date)}</span>
+                  <span>Posted {formatDate(job.postedDate)}</span>
                 </div>
                 
-                {job.expires_at && (
+                {job.expiresAt && (
                   <div className="flex items-center text-gray-600">
                     <Calendar className="h-5 w-5 mr-2 text-primary-500" />
-                    <span>Apply by {formatDate(job.expires_at)}</span>
+                    <span>Apply by {formatDate(job.expiresAt)}</span>
                   </div>
                 )}
               </div>
