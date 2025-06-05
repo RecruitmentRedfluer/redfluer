@@ -22,7 +22,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-xl font-semibold text-primary-900">{job.title}</h3>
         <span className="bg-primary-100 text-primary-700 text-xs font-medium px-2.5 py-1 rounded">
-          {job.contractType.charAt(0).toUpperCase() + job.contractType.slice(1)}
+          {job.contract_type.charAt(0).toUpperCase() + job.contract_type.slice(1)}
         </span>
       </div>
       
@@ -39,7 +39,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         
         <div className="flex items-center text-gray-600">
           <Clock className="h-4 w-4 mr-2" />
-          <span className="text-sm">Posted {formatDate(job.postedDate)}</span>
+          <span className="text-sm">Posted {formatDate(job.posted_date)}</span>
         </div>
       </div>
       

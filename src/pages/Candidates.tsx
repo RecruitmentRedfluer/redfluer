@@ -1,15 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/layout/Layout';
 import HowToApply from '../components/sections/candidates/HowToApply';
 import ThreeStepProcess from '../components/sections/candidates/ThreeStepProcess';
-import { jobListings } from '../data/jobListings';
 import JobCard from '../components/ui/JobCard';
 import SearchFilters from '../components/ui/SearchFilters';
+import { getJobs } from '../lib/jobs';
+import type { JobPosting } from '../types';
 
 const Candidates: React.FC = () => {
+  const [jobs, setJobs] = useState<JobPosting[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadJobs();
+  }, []);
+
+  const loadJobs = async (filters?: any) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await getJobs(filters);
+      setJobs(data);
+    } catch (err) {
+      setError('Failed to load jobs. Please try again later.');
+      console.error('Error loading jobs:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSearch = (filters: any) => {
-    console.log('Search filters:', filters);
-    // In a real app, this would filter jobs or redirect to search results
+    loadJobs(filters);
   };
 
   return (
@@ -62,11 +84,25 @@ const Candidates: React.FC = () => {
             </h2>
             <SearchFilters onSearch={handleSearch} />
             
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {jobListings.slice(0, 4).map(job => (
-                <JobCard key={job.id} job={job} />
-              ))}
-            </div>
+            {error && (
+              <div className="mt-6 p-4 bg-error-100 text-error-800 rounded-md">
+                {error}
+              </div>
+            )}
+            
+            {isLoading ? (
+              <div className="mt-12 text-center text-gray-600">Loading jobs...</div>
+            ) : jobs.length === 0 ? (
+              <div className="mt-12 text-center text-gray-600">
+                No jobs found matching your criteria.
+              </div>
+            ) : (
+              <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {jobs.map(job => (
+                  <JobCard key={job.id} job={job} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

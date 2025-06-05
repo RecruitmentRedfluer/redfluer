@@ -1,22 +1,72 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-import { jobListings } from '../data/jobListings';
 import { MapPin, Clock, Briefcase, Calendar } from 'lucide-react';
 import JobApplication from '../components/ui/JobApplication';
+import { getJobById } from '../lib/jobs';
+import type { JobPosting } from '../types';
 
 const JobDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const job = jobListings.find(job => job.id === id);
+  const navigate = useNavigate();
+  const [job, setJob] = useState<JobPosting | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) {
+      navigate('/candidates');
+      return;
+    }
+
+    loadJob(id);
+  }, [id, navigate]);
+
+  const loadJob = async (jobId: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await getJobById(jobId);
+      setJob(data);
+    } catch (err) {
+      setError('Failed to load job details. Please try again later.');
+      console.error('Error loading job:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
-  if (!job) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(date);
+  };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <p className="text-gray-600">Loading job details...</p>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error || !job) {
     return (
       <Layout pageTitle="Job Not Found">
         <div className="py-12 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-2xl font-bold text-primary-900 mb-4">
-                Job Not Found
+                {error || 'Job Not Found'}
               </h2>
               <p className="text-gray-600 mb-6">
                 Sorry, the job you're looking for doesn't exist or has been removed.
@@ -27,15 +77,6 @@ const JobDetail: React.FC = () => {
       </Layout>
     );
   }
-  
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    }).format(date);
-  };
 
   return (
     <Layout pageTitle={job.title}>
@@ -48,7 +89,7 @@ const JobDetail: React.FC = () => {
                   {job.title}
                 </h1>
                 <span className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium">
-                  {job.contractType.charAt(0).toUpperCase() + job.contractType.slice(1)}
+                  {job.contract_type.charAt(0).toUpperCase() + job.contract_type.slice(1)}
                 </span>
               </div>
               
@@ -65,23 +106,24 @@ const JobDetail: React.FC = () => {
                 
                 <div className="flex items-center text-gray-600">
                   <Clock className="h-5 w-5 mr-2 text-primary-500" />
-                  <span>Posted {formatDate(job.postedDate)}</span>
+                  <span>Posted {formatDate(job.posted_date)}</span>
                 </div>
                 
-                <div className="flex items-center text-gray-600">
-                  <Calendar className="h-5 w-5 mr-2 text-primary-500" />
-                  <span>Apply by {formatDate(new Date(new Date(job.postedDate).getTime() + 30 * 24 * 60 * 60 * 1000).toString())}</span>
-                </div>
+                {job.expires_at && (
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="h-5 w-5 mr-2 text-primary-500" />
+                    <span>Apply by {formatDate(job.expires_at)}</span>
+                  </div>
+                )}
               </div>
               
               <div className="mb-8">
                 <h2 className="text-xl font-semibold text-primary-900 mb-3">Job Description</h2>
-                <p className="text-gray-700 mb-4">{job.description}</p>
-                <p className="text-gray-700">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae justo vel metus ultrices tincidunt. 
-                  Praesent ultricies, arcu at lacinia dapibus, nisl ipsum tincidunt eros, vel suscipit odio nulla et purus. 
-                  Suspendisse potenti. Cras commodo velit at magna tempor, in volutpat turpis tempus.
-                </p>
+                <div className="text-gray-700 space-y-4">
+                  {job.description.split('\n').map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
+                </div>
               </div>
               
               <div className="mb-8">

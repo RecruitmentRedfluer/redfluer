@@ -7,11 +7,15 @@ export interface JobPosting {
   id: string;
   title: string;
   location: string;
-  contractType: 'permanent' | 'temporary' | 'contract';
+  contract_type: 'permanent' | 'temporary' | 'contract';
   role: 'nurse' | 'carer' | 'healthcare-assistant' | 'doctor' | 'admin' | 'other';
   salary: string;
   description: string;
-  postedDate: string;
+  posted_date: string;
+  expires_at?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Testimonial {
