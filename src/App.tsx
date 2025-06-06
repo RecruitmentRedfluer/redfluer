@@ -9,6 +9,9 @@ import Contact from './pages/Contact';
 import JobDetail from './pages/JobDetail';
 import Register from './pages/Register';
 import ApplyJob from './pages/ApplyJob';
+import Admin from './pages/Admin';
+import ShiftManagement from './pages/ShiftManagement';
+import SkillsTracking from './pages/SkillsTracking';
 
 function App() {
   return (
@@ -23,6 +26,9 @@ function App() {
         <Route path="/job/:id" element={<JobDetail />} />
         <Route path="/register" element={<Register />} />
         <Route path="/apply/:id" element={<ApplyJob />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/shifts" element={<ShiftManagement />} />
+        <Route path="/skills" element={<SkillsTracking />} />
       </Routes>
     </Router>
   );

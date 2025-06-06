@@ -37,14 +37,17 @@ const Header: React.FC = () => {
             <Link to="/candidates" className="text-primary-900 hover:text-primary-500 font-medium">
               Candidates
             </Link>
+            <Link to="/shifts" className="text-primary-900 hover:text-primary-500 font-medium">
+              Find Shifts
+            </Link>
+            <Link to="/skills" className="text-primary-900 hover:text-primary-500 font-medium">
+              Skills & Career
+            </Link>
             <Link to="/employers" className="text-primary-900 hover:text-primary-500 font-medium">
               Employers
             </Link>
             <Link to="/about" className="text-primary-900 hover:text-primary-500 font-medium">
               About Us
-            </Link>
-            <Link to="/news" className="text-primary-900 hover:text-primary-500 font-medium">
-              News & Insights
             </Link>
             <Button to="/contact" variant="primary" size="sm">
               Contact Our Team
@@ -80,6 +83,20 @@ const Header: React.FC = () => {
                 Candidates
               </Link>
               <Link 
+                to="/shifts" 
+                className="text-primary-900 hover:text-primary-500 font-medium px-4 py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Find Shifts
+              </Link>
+              <Link 
+                to="/skills" 
+                className="text-primary-900 hover:text-primary-500 font-medium px-4 py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Skills & Career
+              </Link>
+              <Link 
                 to="/employers" 
                 className="text-primary-900 hover:text-primary-500 font-medium px-4 py-2"
                 onClick={() => setIsMenuOpen(false)}
@@ -92,13 +109,6 @@ const Header: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 About Us
-              </Link>
-              <Link 
-                to="/news" 
-                className="text-primary-900 hover:text-primary-500 font-medium px-4 py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                News & Insights
               </Link>
               <div className="px-4">
                 <Button 

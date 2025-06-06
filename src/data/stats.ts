@@ -3,11 +3,11 @@ import { StatItem } from '../types';
 export const stats: StatItem[] = [
   {
     value: '2,500+',
-    label: 'Jobs Filled',
+    label: 'Shifts Filled',
   },
   {
-    value: '7 Days',
-    label: 'Average Placement Time',
+    value: '24/7',
+    label: 'Support Available',
   },
   {
     value: '97%',

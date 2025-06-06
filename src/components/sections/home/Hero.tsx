@@ -25,19 +25,24 @@ const Hero: React.FC = () => {
 
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-2xl text-white">
+        <div className="max-w-3xl text-white">
           <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
-            Connecting Care Professionals with Life-Changing Opportunities
+            Welcome to RedFluer Recruitment
           </h1>
-          <p className="text-lg md:text-xl mb-8 text-white/90">
-            Specialized healthcare recruitment services across the UK, matching talented professionals with the right opportunities.
+          <p className="text-lg md:text-xl mb-6 text-white/90">
+            Specialists in Health Care & Care Services Recruitment and other related sectors
+          </p>
+          <p className="text-base md:text-lg mb-8 text-white/80">
+            Our platform gives candidates the opportunity to see available shifts nearby, which match their qualifications, 
+            and if there are opportunities to upskill to open new shifts, it offers candidates clear guidance on what certification is required to earn more per shift. 
+            Placing true value and usability in the palm of our Staff's hands.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button to="/candidates" variant="primary" size="lg">
-              Search Vacancies
+              Find Shifts Near You
             </Button>
             <Button to="/employers" variant="white" size="lg">
-              Hire Staff
+              Hire Quality Staff
             </Button>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Linkedin, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { Heart, Linkedin, Facebook, Twitter, Mail, Phone, MapPin, Clock } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const [cookiesAccepted, setCookiesAccepted] = useState(false);
@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
               <span className="font-bold text-lg">RedFluer Recruitment</span>
             </Link>
             <p className="text-sm text-gray-300 mb-4">
-              Connecting care professionals with life-changing opportunities across the UK.
+              Specialists in Health Care & Care Services Recruitment. Operating 24/7, 365 days across England and Wales.
             </p>
             <div className="flex space-x-4">
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
@@ -67,38 +67,57 @@ const Footer: React.FC = () => {
             <ul className="space-y-3">
               <li className="flex items-start">
                 <Phone className="w-5 h-5 text-primary-500 mr-2 mt-0.5" />
-                <span className="text-sm text-gray-300">0800 123 4567</span>
+                <div>
+                  <span className="text-sm text-gray-300">0800 123 4567</span>
+                  <p className="text-xs text-gray-400">24/7 Support</p>
+                </div>
               </li>
               <li className="flex items-start">
                 <Mail className="w-5 h-5 text-primary-500 mr-2 mt-0.5" />
-                <span className="text-sm text-gray-300">info@redfluerrecruitment.co.uk</span>
+                <span className="text-sm text-gray-300">info@redfluer.co.uk</span>
               </li>
               <li className="flex items-start">
                 <MapPin className="w-5 h-5 text-primary-500 mr-2 mt-0.5" />
                 <span className="text-sm text-gray-300">
-                  123 Healthcare Avenue<br />
-                  London, EC1 2NP<br />
+                  RedFluer Recruitment<br />
+                  45 Broad Lane<br />
+                  London, N15 4DJ<br />
                   United Kingdom
+                </span>
+              </li>
+              <li className="flex items-start">
+                <Clock className="w-5 h-5 text-primary-500 mr-2 mt-0.5" />
+                <span className="text-sm text-gray-300">
+                  24/7 Service - 365 Days
                 </span>
               </li>
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Services */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Legal</h3>
+            <h3 className="font-semibold text-lg mb-4">Our Services</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/privacy-policy" className="text-gray-300 hover:text-white text-sm">Privacy Policy</Link>
+                <span className="text-gray-300 text-sm">Learning Disabilities Care</span>
               </li>
               <li>
-                <Link to="/terms" className="text-gray-300 hover:text-white text-sm">Terms & Conditions</Link>
+                <span className="text-gray-300 text-sm">Mental Health Services</span>
               </li>
               <li>
-                <Link to="/cookies" className="text-gray-300 hover:text-white text-sm">Cookie Policy</Link>
+                <span className="text-gray-300 text-sm">Specialist Dementia Care</span>
               </li>
               <li>
-                <Link to="/accessibility" className="text-gray-300 hover:text-white text-sm">Accessibility</Link>
+                <span className="text-gray-300 text-sm">NHS & Private Healthcare</span>
+              </li>
+              <li>
+                <span className="text-gray-300 text-sm">Security Services</span>
+              </li>
+              <li>
+                <span className="text-gray-300 text-sm">Cleaning Services</span>
+              </li>
+              <li>
+                <span className="text-gray-300 text-sm">Administrative Roles</span>
               </li>
             </ul>
           </div>
@@ -109,7 +128,7 @@ const Footer: React.FC = () => {
         {/* Copyright */}
         <div className="text-center text-sm text-gray-400">
           <p>&copy; {new Date().getFullYear()} RedFluer Recruitment Ltd. All rights reserved.</p>
-          <p className="mt-1">Registered in England and Wales No. 12345678</p>
+          <p className="mt-1">Registered in England and Wales | Website: www.redfluer.co.uk</p>
         </div>
       </div>
 

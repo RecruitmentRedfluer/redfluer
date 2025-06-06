@@ -3,17 +3,43 @@ import Layout from '../components/layout/Layout';
 import MissionValues from '../components/sections/about/MissionValues';
 import FounderMessage from '../components/sections/about/FounderMessage';
 import Timeline from '../components/sections/about/Timeline';
+import { Clock, MapPin, Users, Award } from 'lucide-react';
 
 const AboutUs: React.FC = () => {
   return (
-    <Layout pageTitle="About Us">
+    <Layout pageTitle="About RedFluer Recruitment">
       {/* Intro Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <p className="text-lg text-gray-600 mb-8 text-center">
-              Founded in 2024, RedFluer Recruitment is a specialist healthcare recruitment agency dedicated to connecting compassionate professionals with rewarding opportunities across the UK healthcare sector.
+              At RedFluer Recruitment, we pride ourselves in connecting skilled staff to all our mandated assignments, especially to our medical and healthcare services nationwide. 
+              With an unwavering commitment to excellence, we understand the unique challenges faced by the healthcare and care sectors and are committed to delivering a standout recruitment solution that truly makes a difference.
             </p>
+
+            {/* Key Highlights */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="bg-primary-50 p-6 rounded-lg border border-primary-100 text-center">
+                <Clock className="w-10 h-10 text-primary-500 mx-auto mb-3" />
+                <h3 className="font-semibold text-primary-900 mb-2">24/7 Operations</h3>
+                <p className="text-sm text-gray-600">365 days service ensuring support whenever needed</p>
+              </div>
+              <div className="bg-primary-50 p-6 rounded-lg border border-primary-100 text-center">
+                <MapPin className="w-10 h-10 text-primary-500 mx-auto mb-3" />
+                <h3 className="font-semibold text-primary-900 mb-2">England & Wales</h3>
+                <p className="text-sm text-gray-600">Comprehensive coverage across contracted partners</p>
+              </div>
+              <div className="bg-primary-50 p-6 rounded-lg border border-primary-100 text-center">
+                <Users className="w-10 h-10 text-primary-500 mx-auto mb-3" />
+                <h3 className="font-semibold text-primary-900 mb-2">Specialist Care</h3>
+                <p className="text-sm text-gray-600">Learning disabilities, mental health, and dementia</p>
+              </div>
+              <div className="bg-primary-50 p-6 rounded-lg border border-primary-100 text-center">
+                <Award className="w-10 h-10 text-primary-500 mx-auto mb-3" />
+                <h3 className="font-semibold text-primary-900 mb-2">Quality Focus</h3>
+                <p className="text-sm text-gray-600">Prioritising quality, efficiency, dedication and flexibility</p>
+              </div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <img 
@@ -24,12 +50,53 @@ const AboutUs: React.FC = () => {
               <div>
                 <h3 className="text-xl font-semibold text-primary-900 mb-3">Who We Are</h3>
                 <p className="text-gray-600 mb-4">
-                  We are a team of experienced recruitment professionals with backgrounds in healthcare, staffing, and human resources. Our combined expertise gives us a unique understanding of the challenges and opportunities in healthcare recruitment.
+                  RedFluer Recruitment primes itself as one of the best upcoming recruitment agencies, providing tailored staffing solutions to contracted partners across England and Wales. 
+                  We understand the critical role healthcare professionals play in delivering life-changing care, which is why we prioritise quality, efficiency, dedication and flexibility in every placement we provide.
                 </p>
                 <p className="text-gray-600">
-                  Based in London with a network spanning the UK, we work with NHS trusts, private hospitals, care homes, and community healthcare providers to deliver staffing solutions that prioritize quality care.
+                  From NHS hospitals, private clinics to nursing homes, mental health units, and others, our professional and dedicated team works tirelessly to match skilled professionals with roles that suit their expertise and availability.
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Speciality */}
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-primary-900 mb-8 text-center">
+              Our Speciality
+            </h2>
+            <p className="text-gray-600 mb-8 text-center text-lg">
+              At RedFluer Recruitment we meet a wide range of permanent, temporary or contract staffing needs within learning disabilities, mental health and specialist dementia environments.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <h3 className="font-semibold text-primary-900 mb-2">Registered General Nurse</h3>
+                <p className="text-sm text-gray-600">(RGN, RN)</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <h3 className="font-semibold text-primary-900 mb-2">Health Care Assistants</h3>
+                <p className="text-sm text-gray-600">(HCAs)</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <h3 className="font-semibold text-primary-900 mb-2">Senior Care Support Workers</h3>
+                <p className="text-sm text-gray-600">Team Leaders</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <h3 className="font-semibold text-primary-900 mb-2">Support Workers</h3>
+                <p className="text-sm text-gray-600">All levels</p>
+              </div>
+            </div>
+
+            <div className="bg-primary-50 p-6 rounded-lg border border-primary-100 text-center">
+              <p className="text-gray-700 text-lg font-medium">
+                We also understand that quality care staff are worth more than money can buy – 
+                That is why we identify the very best candidates for the right jobs.
+              </p>
             </div>
           </div>
         </div>
@@ -87,6 +154,38 @@ const AboutUs: React.FC = () => {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Multi-Sector Services */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-primary-900 mb-6">
+              Recruitment for Other Sectors
+            </h2>
+            <p className="text-gray-600 mb-8 text-lg">
+              At RedFluer Recruitment, we are aware of the challenges of running a successful business while managing fluctuating staffing needs. 
+              That's why RedFluer positions itself in providing all your staffing concerns.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-primary-900 mb-3">Security</h3>
+                <p className="text-gray-600">Professional security personnel for various environments</p>
+              </div>
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-primary-900 mb-3">Cleaners</h3>
+                <p className="text-gray-600">Reliable cleaning staff for commercial and healthcare facilities</p>
+              </div>
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-primary-900 mb-3">Administrative</h3>
+                <p className="text-gray-600">Skilled administrative professionals for various roles</p>
+              </div>
+            </div>
+            <p className="text-gray-600">
+              We pride ourselves in recruiting the best in the market and managing disappointment from your end with a timely and efficient manner.
+            </p>
           </div>
         </div>
       </section>
