@@ -6,10 +6,12 @@ import JobCard from '../components/ui/JobCard';
 import SearchFilters from '../components/ui/SearchFilters';
 import Button from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
+import { transformKeys } from '../lib/jobs';
+import { JobPosting } from '../types';
 import { MapPin, Clock, Award, Users } from 'lucide-react';
 
 const Home: React.FC = () => {
-  const [featuredJobs, setFeaturedJobs] = useState<any[]>([]);
+  const [featuredJobs, setFeaturedJobs] = useState<JobPosting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -25,7 +27,10 @@ const Home: React.FC = () => {
           .limit(3);
 
         if (error) throw error;
-        setFeaturedJobs(data || []);
+        
+        // Transform snake_case keys to camelCase to match JobPosting interface
+        const transformedJobs = (data || []).map(job => transformKeys(job));
+        setFeaturedJobs(transformedJobs);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load jobs');
       } finally {
