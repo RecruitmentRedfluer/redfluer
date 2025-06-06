@@ -239,7 +239,7 @@ const SkillsTracking: React.FC = () => {
                       
                       <div className="flex justify-between items-center">
                         {skill.status === 'available' && (
-                          <Button variant="primary" size="sm">
+                          <Button variant="primary\" size="sm">
                             Start Training
                           </Button>
                         )}
