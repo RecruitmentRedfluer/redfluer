@@ -7,7 +7,7 @@ function toCamelCase(str: string): string {
 }
 
 // Helper function to transform object keys from snake_case to camelCase
-function transformKeys(obj: any): any {
+export function transformKeys(obj: any): any {
   if (Array.isArray(obj)) {
     return obj.map(transformKeys);
   }
