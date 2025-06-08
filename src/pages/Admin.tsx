@@ -79,6 +79,18 @@ const Admin: React.FC = () => {
     }
   };
 
+  const handleAddNewClick = () => {
+    if (activeTab === 'jobs') {
+      setShowJobForm(true);
+      setShowShiftForm(false);
+      resetJobForm();
+    } else {
+      setShowShiftForm(true);
+      setShowJobForm(false);
+      resetShiftForm();
+    }
+  };
+
   // Jobs functions
   const loadJobs = async () => {
     setIsLoading(true);
@@ -164,6 +176,7 @@ const Admin: React.FC = () => {
       is_active: job.is_active
     });
     setShowJobForm(true);
+    setShowShiftForm(false);
   };
 
   const handleDeleteJob = async (id: string) => {
@@ -284,6 +297,7 @@ const Admin: React.FC = () => {
       isActive: shift.isActive
     });
     setShowShiftForm(true);
+    setShowJobForm(false);
   };
 
   const handleDeleteShift = async (id: string) => {
@@ -355,15 +369,7 @@ const Admin: React.FC = () => {
             <h1 className="text-2xl font-bold text-primary-900">Admin Dashboard</h1>
             <div className="flex gap-4">
               <Button
-                onClick={() => {
-                  if (activeTab === 'jobs') {
-                    setShowJobForm(!showJobForm);
-                    resetJobForm();
-                  } else {
-                    setShowShiftForm(!showShiftForm);
-                    resetShiftForm();
-                  }
-                }}
+                onClick={handleAddNewClick}
                 variant="primary"
                 size="md"
               >
@@ -383,7 +389,11 @@ const Admin: React.FC = () => {
           {/* Tab Navigation */}
           <div className="flex border-b border-gray-200 mt-4">
             <button
-              onClick={() => setActiveTab('jobs')}
+              onClick={() => {
+                setActiveTab('jobs');
+                setShowJobForm(false);
+                setShowShiftForm(false);
+              }}
               className={`px-6 py-3 font-medium text-sm border-b-2 ${
                 activeTab === 'jobs'
                   ? 'border-primary-500 text-primary-600'
@@ -393,7 +403,11 @@ const Admin: React.FC = () => {
               Job Postings
             </button>
             <button
-              onClick={() => setActiveTab('shifts')}
+              onClick={() => {
+                setActiveTab('shifts');
+                setShowJobForm(false);
+                setShowShiftForm(false);
+              }}
               className={`px-6 py-3 font-medium text-sm border-b-2 ${
                 activeTab === 'shifts'
                   ? 'border-primary-500 text-primary-600'
