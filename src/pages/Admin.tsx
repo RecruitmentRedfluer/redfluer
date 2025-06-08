@@ -69,6 +69,7 @@ const Admin: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [submitMessage, setSubmitMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   
   // Form data states
   const [jobFormData, setJobFormData] = useState({
@@ -156,20 +157,34 @@ const Admin: React.FC = () => {
       setCareerPaths(pathsData.data || []);
     } catch (error) {
       console.error('Error loading data:', error);
-      alert('Failed to load data');
+      setSubmitMessage({
+        type: 'error',
+        text: 'Failed to load data. Please refresh the page.'
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleAddNewClick = () => {
+    console.log('Add New button clicked for tab:', activeTab);
+    setShowForm(true);
+    setEditingItem(null);
+    resetForm();
+    setSubmitMessage(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted for tab:', activeTab);
     setIsLoading(true);
+    setSubmitMessage(null);
 
     try {
       let result;
       
       if (activeTab === 'jobs') {
+        console.log('Submitting job data:', jobFormData);
         if (editingItem) {
           result = await supabase
             .from('job_postings')
@@ -187,6 +202,7 @@ const Admin: React.FC = () => {
             }]);
         }
       } else if (activeTab === 'shifts') {
+        console.log('Submitting shift data:', shiftFormData);
         const shiftData = {
           ...shiftFormData,
           hourly_rate: parseFloat(shiftFormData.hourly_rate),
@@ -204,6 +220,7 @@ const Admin: React.FC = () => {
             .insert([shiftData]);
         }
       } else if (activeTab === 'skills') {
+        console.log('Submitting skill data:', skillFormData);
         if (editingItem) {
           result = await supabase
             .from('skills')
@@ -215,6 +232,7 @@ const Admin: React.FC = () => {
             .insert([skillFormData]);
         }
       } else if (activeTab === 'paths') {
+        console.log('Submitting career path data:', pathFormData);
         const pathData = {
           ...pathFormData,
           required_skills: pathFormData.required_skills.filter(skill => skill.trim() !== '')
@@ -232,14 +250,30 @@ const Admin: React.FC = () => {
         }
       }
 
-      if (result?.error) throw result.error;
+      if (result?.error) {
+        console.error('Database error:', result.error);
+        throw result.error;
+      }
 
-      alert(`${activeTab.slice(0, -1)} ${editingItem ? 'updated' : 'created'} successfully!`);
+      console.log('Successfully saved:', result);
+      setSubmitMessage({
+        type: 'success',
+        text: `${activeTab.slice(0, -1)} ${editingItem ? 'updated' : 'created'} successfully!`
+      });
+      
       resetForm();
-      loadAllData();
+      await loadAllData();
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSubmitMessage(null);
+      }, 3000);
     } catch (error) {
       console.error('Error saving:', error);
-      alert('Failed to save');
+      setSubmitMessage({
+        type: 'error',
+        text: `Failed to save ${activeTab.slice(0, -1)}. Please check all required fields and try again.`
+      });
     } finally {
       setIsLoading(false);
     }
@@ -291,9 +325,11 @@ const Admin: React.FC = () => {
     });
     setEditingItem(null);
     setShowForm(false);
+    setSubmitMessage(null);
   };
 
   const handleEdit = (item: any) => {
+    console.log('Editing item:', item);
     setEditingItem(item);
     
     if (activeTab === 'jobs') {
@@ -346,6 +382,7 @@ const Admin: React.FC = () => {
     }
     
     setShowForm(true);
+    setSubmitMessage(null);
   };
 
   const handleDelete = async (id: string, table: string) => {
@@ -359,11 +396,24 @@ const Admin: React.FC = () => {
         .eq('id', id);
 
       if (error) throw error;
-      alert(`${activeTab.slice(0, -1)} deleted successfully!`);
-      loadAllData();
+      
+      setSubmitMessage({
+        type: 'success',
+        text: `${activeTab.slice(0, -1)} deleted successfully!`
+      });
+      
+      await loadAllData();
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSubmitMessage(null);
+      }, 3000);
     } catch (error) {
       console.error('Error deleting:', error);
-      alert('Failed to delete');
+      setSubmitMessage({
+        type: 'error',
+        text: 'Failed to delete item'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -378,10 +428,13 @@ const Admin: React.FC = () => {
         .eq('id', item.id);
 
       if (error) throw error;
-      loadAllData();
+      await loadAllData();
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update status');
+      setSubmitMessage({
+        type: 'error',
+        text: 'Failed to update status'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -435,6 +488,16 @@ const Admin: React.FC = () => {
     }
   };
 
+  const getTabLabel = () => {
+    switch (activeTab) {
+      case 'jobs': return 'Job';
+      case 'shifts': return 'Shift';
+      case 'skills': return 'Skill';
+      case 'paths': return 'Career Path';
+      default: return 'Item';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-white shadow-sm border-b">
@@ -443,15 +506,13 @@ const Admin: React.FC = () => {
             <h1 className="text-2xl font-bold text-primary-900">Admin Dashboard</h1>
             <div className="flex gap-4">
               <Button
-                onClick={() => {
-                  setShowForm(!showForm);
-                  resetForm();
-                }}
+                onClick={handleAddNewClick}
                 variant="primary"
                 size="md"
+                disabled={isLoading}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add New {activeTab.slice(0, -1).replace(/([A-Z])/g, ' $1').trim()}
+                Add New {getTabLabel()}
               </Button>
               <Button
                 onClick={() => setIsAuthenticated(false)}
@@ -466,6 +527,15 @@ const Admin: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Global Messages */}
+        {submitMessage && (
+          <div className={`mb-6 p-4 rounded-md ${
+            submitMessage.type === 'success' ? 'bg-success-100 text-success-800' : 'bg-error-100 text-error-800'
+          }`}>
+            {submitMessage.text}
+          </div>
+        )}
+
         {/* Tab Navigation */}
         <div className="flex border-b border-gray-200 mb-8">
           {[
@@ -477,6 +547,7 @@ const Admin: React.FC = () => {
             <button
               key={tab.key}
               onClick={() => {
+                console.log('Switching to tab:', tab.key);
                 setActiveTab(tab.key as any);
                 setShowForm(false);
                 resetForm();
@@ -496,7 +567,7 @@ const Admin: React.FC = () => {
         {showForm && (
           <div className="bg-white p-6 rounded-lg shadow-md mb-8">
             <h2 className="text-xl font-semibold text-primary-900 mb-4">
-              {editingItem ? 'Edit' : 'Add New'} {activeTab.slice(0, -1).replace(/([A-Z])/g, ' $1').trim()}
+              {editingItem ? 'Edit' : 'Add New'} {getTabLabel()}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Job Form */}
@@ -943,10 +1014,12 @@ const Admin: React.FC = () => {
             </h2>
           </div>
           
-          {isLoading ? (
+          {isLoading && !showForm ? (
             <div className="p-6 text-center">Loading...</div>
           ) : getCurrentData().length === 0 ? (
-            <div className="p-6 text-center text-gray-500">No {activeTab} found</div>
+            <div className="p-6 text-center text-gray-500">
+              No {activeTab} found. Click "Add New {getTabLabel()}" to create one.
+            </div>
           ) : (
             <div className="divide-y divide-gray-200">
               {getCurrentData().map((item: any) => (
@@ -1005,6 +1078,7 @@ const Admin: React.FC = () => {
                         onClick={() => toggleStatus(item, getCurrentTable())}
                         className="p-2 text-gray-600 hover:text-primary-600"
                         title={item.is_active ? 'Deactivate' : 'Activate'}
+                        disabled={isLoading}
                       >
                         {item.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -1012,6 +1086,7 @@ const Admin: React.FC = () => {
                         onClick={() => handleEdit(item)}
                         className="p-2 text-gray-600 hover:text-primary-600"
                         title="Edit"
+                        disabled={isLoading}
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -1019,6 +1094,7 @@ const Admin: React.FC = () => {
                         onClick={() => handleDelete(item.id, getCurrentTable())}
                         className="p-2 text-gray-600 hover:text-error-600"
                         title="Delete"
+                        disabled={isLoading}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
