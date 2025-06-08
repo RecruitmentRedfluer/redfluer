@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import Button from '../components/ui/Button';
-import { Plus, Edit, Trash2, Eye, EyeOff, Calendar, Clock } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, Calendar, Clock, Award, BookOpen } from 'lucide-react';
 import { getAllShifts, createShift, updateShift, deleteShift, type Shift } from '../lib/shifts';
+import { getAllSkills, createSkill, updateSkill, deleteSkill, getAllCareerPaths, createCareerPath, updateCareerPath, deleteCareerPath, type Skill, type CareerPath } from '../lib/skills';
 
 interface JobPosting {
   id: string;
@@ -20,7 +21,7 @@ interface JobPosting {
 const Admin: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
-  const [activeTab, setActiveTab] = useState<'jobs' | 'shifts'>('jobs');
+  const [activeTab, setActiveTab] = useState<'jobs' | 'shifts' | 'skills' | 'paths'>('jobs');
   
   // Jobs state
   const [jobs, setJobs] = useState<JobPosting[]>([]);
@@ -56,6 +57,37 @@ const Admin: React.FC = () => {
   });
   const [requirementInput, setRequirementInput] = useState('');
 
+  // Skills state
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [showSkillForm, setShowSkillForm] = useState(false);
+  const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
+  const [skillFormData, setSkillFormData] = useState({
+    name: '',
+    category: '',
+    description: '',
+    duration: '',
+    provider: '',
+    earnsPremium: false,
+    premiumRate: '',
+    isActive: true
+  });
+
+  // Career paths state
+  const [careerPaths, setCareerPaths] = useState<CareerPath[]>([]);
+  const [showPathForm, setShowPathForm] = useState(false);
+  const [editingPath, setEditingPath] = useState<CareerPath | null>(null);
+  const [pathFormData, setPathFormData] = useState({
+    title: '',
+    currentRole: '',
+    targetRole: '',
+    salaryIncrease: '',
+    requiredSkills: [] as string[],
+    timeToComplete: '',
+    description: '',
+    isActive: true
+  });
+  const [skillInput, setSkillInput] = useState('');
+
   const [isLoading, setIsLoading] = useState(false);
 
   const ADMIN_PASSWORD = 'redfluer2024admin';
@@ -64,8 +96,12 @@ const Admin: React.FC = () => {
     if (isAuthenticated) {
       if (activeTab === 'jobs') {
         loadJobs();
-      } else {
+      } else if (activeTab === 'shifts') {
         loadShifts();
+      } else if (activeTab === 'skills') {
+        loadSkills();
+      } else if (activeTab === 'paths') {
+        loadCareerPaths();
       }
     }
   }, [isAuthenticated, activeTab]);
@@ -83,11 +119,27 @@ const Admin: React.FC = () => {
     if (activeTab === 'jobs') {
       setShowJobForm(true);
       setShowShiftForm(false);
+      setShowSkillForm(false);
+      setShowPathForm(false);
       resetJobForm();
-    } else {
+    } else if (activeTab === 'shifts') {
       setShowShiftForm(true);
       setShowJobForm(false);
+      setShowSkillForm(false);
+      setShowPathForm(false);
       resetShiftForm();
+    } else if (activeTab === 'skills') {
+      setShowSkillForm(true);
+      setShowJobForm(false);
+      setShowShiftForm(false);
+      setShowPathForm(false);
+      resetSkillForm();
+    } else if (activeTab === 'paths') {
+      setShowPathForm(true);
+      setShowJobForm(false);
+      setShowShiftForm(false);
+      setShowSkillForm(false);
+      resetPathForm();
     }
   };
 
@@ -177,6 +229,8 @@ const Admin: React.FC = () => {
     });
     setShowJobForm(true);
     setShowShiftForm(false);
+    setShowSkillForm(false);
+    setShowPathForm(false);
   };
 
   const handleDeleteJob = async (id: string) => {
@@ -298,6 +352,8 @@ const Admin: React.FC = () => {
     });
     setShowShiftForm(true);
     setShowJobForm(false);
+    setShowSkillForm(false);
+    setShowPathForm(false);
   };
 
   const handleDeleteShift = async (id: string) => {
@@ -331,6 +387,206 @@ const Admin: React.FC = () => {
       ...shiftFormData,
       requirements: shiftFormData.requirements.filter((_, i) => i !== index)
     });
+  };
+
+  // Skills functions
+  const loadSkills = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getAllSkills();
+      setSkills(data);
+    } catch (error) {
+      console.error('Error loading skills:', error);
+      alert('Failed to load skills');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSkillSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      if (editingSkill) {
+        await updateSkill(editingSkill.id, skillFormData);
+        alert('Skill updated successfully!');
+      } else {
+        await createSkill(skillFormData);
+        alert('Skill created successfully!');
+      }
+
+      resetSkillForm();
+      loadSkills();
+    } catch (error) {
+      console.error('Error saving skill:', error);
+      alert('Failed to save skill');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetSkillForm = () => {
+    setSkillFormData({
+      name: '',
+      category: '',
+      description: '',
+      duration: '',
+      provider: '',
+      earnsPremium: false,
+      premiumRate: '',
+      isActive: true
+    });
+    setEditingSkill(null);
+    setShowSkillForm(false);
+  };
+
+  const handleEditSkill = (skill: Skill) => {
+    setEditingSkill(skill);
+    setSkillFormData({
+      name: skill.name,
+      category: skill.category,
+      description: skill.description || '',
+      duration: skill.duration || '',
+      provider: skill.provider || '',
+      earnsPremium: skill.earnsPremium,
+      premiumRate: skill.premiumRate || '',
+      isActive: skill.isActive
+    });
+    setShowSkillForm(true);
+    setShowJobForm(false);
+    setShowShiftForm(false);
+    setShowPathForm(false);
+  };
+
+  const handleDeleteSkill = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this skill?')) return;
+
+    setIsLoading(true);
+    try {
+      await deleteSkill(id);
+      alert('Skill deleted successfully!');
+      loadSkills();
+    } catch (error) {
+      console.error('Error deleting skill:', error);
+      alert('Failed to delete skill');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Career paths functions
+  const loadCareerPaths = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getAllCareerPaths();
+      setCareerPaths(data);
+    } catch (error) {
+      console.error('Error loading career paths:', error);
+      alert('Failed to load career paths');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePathSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      if (editingPath) {
+        await updateCareerPath(editingPath.id, pathFormData);
+        alert('Career path updated successfully!');
+      } else {
+        await createCareerPath(pathFormData);
+        alert('Career path created successfully!');
+      }
+
+      resetPathForm();
+      loadCareerPaths();
+    } catch (error) {
+      console.error('Error saving career path:', error);
+      alert('Failed to save career path');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetPathForm = () => {
+    setPathFormData({
+      title: '',
+      currentRole: '',
+      targetRole: '',
+      salaryIncrease: '',
+      requiredSkills: [],
+      timeToComplete: '',
+      description: '',
+      isActive: true
+    });
+    setEditingPath(null);
+    setShowPathForm(false);
+    setSkillInput('');
+  };
+
+  const handleEditPath = (path: CareerPath) => {
+    setEditingPath(path);
+    setPathFormData({
+      title: path.title,
+      currentRole: path.currentRole,
+      targetRole: path.targetRole,
+      salaryIncrease: path.salaryIncrease,
+      requiredSkills: path.requiredSkills || [],
+      timeToComplete: path.timeToComplete,
+      description: path.description || '',
+      isActive: path.isActive
+    });
+    setShowPathForm(true);
+    setShowJobForm(false);
+    setShowShiftForm(false);
+    setShowSkillForm(false);
+  };
+
+  const handleDeletePath = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this career path?')) return;
+
+    setIsLoading(true);
+    try {
+      await deleteCareerPath(id);
+      alert('Career path deleted successfully!');
+      loadCareerPaths();
+    } catch (error) {
+      console.error('Error deleting career path:', error);
+      alert('Failed to delete career path');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const addSkill = () => {
+    if (skillInput.trim() && !pathFormData.requiredSkills.includes(skillInput.trim())) {
+      setPathFormData({
+        ...pathFormData,
+        requiredSkills: [...pathFormData.requiredSkills, skillInput.trim()]
+      });
+      setSkillInput('');
+    }
+  };
+
+  const removeSkill = (index: number) => {
+    setPathFormData({
+      ...pathFormData,
+      requiredSkills: pathFormData.requiredSkills.filter((_, i) => i !== index)
+    });
+  };
+
+  const getTabTitle = () => {
+    switch (activeTab) {
+      case 'jobs': return 'Job';
+      case 'shifts': return 'Shift';
+      case 'skills': return 'Skill';
+      case 'paths': return 'Career Path';
+      default: return 'Item';
+    }
   };
 
   if (!isAuthenticated) {
@@ -374,7 +630,7 @@ const Admin: React.FC = () => {
                 size="md"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add New {activeTab === 'jobs' ? 'Job' : 'Shift'}
+                Add New {getTabTitle()}
               </Button>
               <Button
                 onClick={() => setIsAuthenticated(false)}
@@ -393,6 +649,8 @@ const Admin: React.FC = () => {
                 setActiveTab('jobs');
                 setShowJobForm(false);
                 setShowShiftForm(false);
+                setShowSkillForm(false);
+                setShowPathForm(false);
               }}
               className={`px-6 py-3 font-medium text-sm border-b-2 ${
                 activeTab === 'jobs'
@@ -407,6 +665,8 @@ const Admin: React.FC = () => {
                 setActiveTab('shifts');
                 setShowJobForm(false);
                 setShowShiftForm(false);
+                setShowSkillForm(false);
+                setShowPathForm(false);
               }}
               className={`px-6 py-3 font-medium text-sm border-b-2 ${
                 activeTab === 'shifts'
@@ -415,6 +675,38 @@ const Admin: React.FC = () => {
               }`}
             >
               Shift Management
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('skills');
+                setShowJobForm(false);
+                setShowShiftForm(false);
+                setShowSkillForm(false);
+                setShowPathForm(false);
+              }}
+              className={`px-6 py-3 font-medium text-sm border-b-2 ${
+                activeTab === 'skills'
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Skills Management
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('paths');
+                setShowJobForm(false);
+                setShowShiftForm(false);
+                setShowSkillForm(false);
+                setShowPathForm(false);
+              }}
+              className={`px-6 py-3 font-medium text-sm border-b-2 ${
+                activeTab === 'paths'
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Career Paths
             </button>
           </div>
         </div>
@@ -867,6 +1159,406 @@ const Admin: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleDeleteShift(shift.id)}
+                            className="p-2 text-gray-600 hover:text-error-600"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Skills Tab */}
+        {activeTab === 'skills' && (
+          <>
+            {/* Skill Form */}
+            {showSkillForm && (
+              <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+                <h2 className="text-xl font-semibold text-primary-900 mb-4">
+                  {editingSkill ? 'Edit Skill' : 'Add New Skill'}
+                </h2>
+                <form onSubmit={handleSkillSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Skill Name *</label>
+                      <input
+                        type="text"
+                        value={skillFormData.name}
+                        onChange={(e) => setSkillFormData({...skillFormData, name: e.target.value})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+                      <input
+                        type="text"
+                        value={skillFormData.category}
+                        onChange={(e) => setSkillFormData({...skillFormData, category: e.target.value})}
+                        placeholder="e.g., Mental Health, Clinical Skills"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                      <input
+                        type="text"
+                        value={skillFormData.duration}
+                        onChange={(e) => setSkillFormData({...skillFormData, duration: e.target.value})}
+                        placeholder="e.g., 2 days, 1 week"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Provider</label>
+                      <input
+                        type="text"
+                        value={skillFormData.provider}
+                        onChange={(e) => setSkillFormData({...skillFormData, provider: e.target.value})}
+                        placeholder="e.g., NHS, Skills for Care"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                      value={skillFormData.description}
+                      onChange={(e) => setSkillFormData({...skillFormData, description: e.target.value})}
+                      rows={3}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                      placeholder="Describe what this skill covers..."
+                    />
+                  </div>
+                  
+                  <div className="flex items-center space-x-6">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="earns_premium"
+                        checked={skillFormData.earnsPremium}
+                        onChange={(e) => setSkillFormData({...skillFormData, earnsPremium: e.target.checked})}
+                        className="mr-2"
+                      />
+                      <label htmlFor="earns_premium" className="text-sm font-medium text-gray-700">
+                        Earns Premium
+                      </label>
+                    </div>
+                    
+                    {skillFormData.earnsPremium && (
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={skillFormData.premiumRate}
+                          onChange={(e) => setSkillFormData({...skillFormData, premiumRate: e.target.value})}
+                          placeholder="e.g., +£3.50/hour"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="skill_is_active"
+                      checked={skillFormData.isActive}
+                      onChange={(e) => setSkillFormData({...skillFormData, isActive: e.target.checked})}
+                      className="mr-2"
+                    />
+                    <label htmlFor="skill_is_active" className="text-sm font-medium text-gray-700">
+                      Skill is active
+                    </label>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <Button type="submit" variant="primary" size="md" disabled={isLoading}>
+                      {isLoading ? 'Saving...' : (editingSkill ? 'Update Skill' : 'Create Skill')}
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={resetSkillForm}
+                      variant="outline"
+                      size="md"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Skills List */}
+            <div className="bg-white rounded-lg shadow-md">
+              <div className="p-6 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-primary-900">All Skills ({skills.length})</h2>
+              </div>
+              
+              {isLoading ? (
+                <div className="p-6 text-center">Loading skills...</div>
+              ) : skills.length === 0 ? (
+                <div className="p-6 text-center text-gray-500">No skills found</div>
+              ) : (
+                <div className="divide-y divide-gray-200">
+                  {skills.map(skill => (
+                    <div key={skill.id} className="p-6">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-lg font-semibold text-primary-900">{skill.name}</h3>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              skill.isActive ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {skill.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                            <span className="bg-primary-100 text-primary-700 px-2 py-1 rounded-full text-xs font-medium">
+                              {skill.category}
+                            </span>
+                            {skill.earnsPremium && (
+                              <span className="bg-success-100 text-success-700 px-2 py-1 rounded-full text-xs font-medium">
+                                Premium: {skill.premiumRate}
+                              </span>
+                            )}
+                          </div>
+                          {skill.description && (
+                            <p className="text-gray-700 text-sm mb-2">{skill.description}</p>
+                          )}
+                          <div className="text-gray-600 mb-2">
+                            {skill.duration && <span className="mr-4">⏱️ {skill.duration}</span>}
+                            {skill.provider && <span>🏢 {skill.provider}</span>}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Created: {new Date(skill.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <div className="flex gap-2 ml-4">
+                          <button
+                            onClick={() => handleEditSkill(skill)}
+                            className="p-2 text-gray-600 hover:text-primary-600"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteSkill(skill.id)}
+                            className="p-2 text-gray-600 hover:text-error-600"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Career Paths Tab */}
+        {activeTab === 'paths' && (
+          <>
+            {/* Career Path Form */}
+            {showPathForm && (
+              <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+                <h2 className="text-xl font-semibold text-primary-900 mb-4">
+                  {editingPath ? 'Edit Career Path' : 'Add New Career Path'}
+                </h2>
+                <form onSubmit={handlePathSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Path Title *</label>
+                      <input
+                        type="text"
+                        value={pathFormData.title}
+                        onChange={(e) => setPathFormData({...pathFormData, title: e.target.value})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Time to Complete *</label>
+                      <input
+                        type="text"
+                        value={pathFormData.timeToComplete}
+                        onChange={(e) => setPathFormData({...pathFormData, timeToComplete: e.target.value})}
+                        placeholder="e.g., 3-6 months"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Current Role *</label>
+                      <input
+                        type="text"
+                        value={pathFormData.currentRole}
+                        onChange={(e) => setPathFormData({...pathFormData, currentRole: e.target.value})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Target Role *</label>
+                      <input
+                        type="text"
+                        value={pathFormData.targetRole}
+                        onChange={(e) => setPathFormData({...pathFormData, targetRole: e.target.value})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        required
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Salary Increase *</label>
+                      <input
+                        type="text"
+                        value={pathFormData.salaryIncrease}
+                        onChange={(e) => setPathFormData({...pathFormData, salaryIncrease: e.target.value})}
+                        placeholder="e.g., +£4,000 - £6,000 annually"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        required
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Required Skills</label>
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={skillInput}
+                        onChange={(e) => setSkillInput(e.target.value)}
+                        placeholder="Add a required skill..."
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
+                      />
+                      <Button type="button" onClick={addSkill} variant="outline" size="md">
+                        Add
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {pathFormData.requiredSkills.map((skill, index) => (
+                        <span key={index} className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm flex items-center">
+                          {skill}
+                          <button
+                            type="button"
+                            onClick={() => removeSkill(index)}
+                            className="ml-2 text-primary-500 hover:text-primary-700"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                      value={pathFormData.description}
+                      onChange={(e) => setPathFormData({...pathFormData, description: e.target.value})}
+                      rows={3}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                      placeholder="Describe this career advancement path..."
+                    />
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="path_is_active"
+                      checked={pathFormData.isActive}
+                      onChange={(e) => setPathFormData({...pathFormData, isActive: e.target.checked})}
+                      className="mr-2"
+                    />
+                    <label htmlFor="path_is_active" className="text-sm font-medium text-gray-700">
+                      Career path is active
+                    </label>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <Button type="submit" variant="primary" size="md" disabled={isLoading}>
+                      {isLoading ? 'Saving...' : (editingPath ? 'Update Career Path' : 'Create Career Path')}
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={resetPathForm}
+                      variant="outline"
+                      size="md"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Career Paths List */}
+            <div className="bg-white rounded-lg shadow-md">
+              <div className="p-6 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-primary-900">All Career Paths ({careerPaths.length})</h2>
+              </div>
+              
+              {isLoading ? (
+                <div className="p-6 text-center">Loading career paths...</div>
+              ) : careerPaths.length === 0 ? (
+                <div className="p-6 text-center text-gray-500">No career paths found</div>
+              ) : (
+                <div className="divide-y divide-gray-200">
+                  {careerPaths.map(path => (
+                    <div key={path.id} className="p-6">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-lg font-semibold text-primary-900">{path.title}</h3>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              path.isActive ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {path.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                            <span className="bg-success-100 text-success-700 px-2 py-1 rounded-full text-xs font-medium">
+                              {path.salaryIncrease}
+                            </span>
+                          </div>
+                          <div className="text-gray-600 mb-2">
+                            <span className="mr-4">📈 {path.currentRole} → {path.targetRole}</span>
+                            <span>⏱️ {path.timeToComplete}</span>
+                          </div>
+                          {path.description && (
+                            <p className="text-gray-700 text-sm mb-2">{path.description}</p>
+                          )}
+                          {path.requiredSkills && path.requiredSkills.length > 0 && (
+                            <div className="mb-2">
+                              <span className="text-sm text-gray-500">Required Skills: </span>
+                              {path.requiredSkills.map((skill, index) => (
+                                <span key={index} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs mr-1">
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          <div className="text-xs text-gray-500">
+                            Created: {new Date(path.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <div className="flex gap-2 ml-4">
+                          <button
+                            onClick={() => handleEditPath(path)}
+                            className="p-2 text-gray-600 hover:text-primary-600"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeletePath(path.id)}
                             className="p-2 text-gray-600 hover:text-error-600"
                             title="Delete"
                           >
