@@ -167,23 +167,22 @@ const Admin: React.FC = () => {
   };
 
   const handleAddNewClick = () => {
-    console.log('Add New button clicked for tab:', activeTab);
     setShowForm(true);
     setEditingItem(null);
     resetForm();
     setSubmitMessage(null);
 
-    // Wait for the next paint so the form exists in the DOM, then scroll to it.
+    // Scroll to form after it's rendered
     setTimeout(() => {
-      document
-        .getElementById('add-edit-form')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 0);
+      const formElement = document.getElementById('add-edit-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted for tab:', activeTab);
     setIsLoading(true);
     setSubmitMessage(null);
 
@@ -191,8 +190,6 @@ const Admin: React.FC = () => {
       let result;
       
       if (activeTab === 'jobs') {
-        console.log('Submitting job data:', jobFormData);
-        
         // Validate required fields
         if (!jobFormData.title || !jobFormData.location || !jobFormData.salary || !jobFormData.description) {
           throw new Error('Please fill in all required fields');
@@ -215,8 +212,6 @@ const Admin: React.FC = () => {
             }]);
         }
       } else if (activeTab === 'shifts') {
-        console.log('Submitting shift data:', shiftFormData);
-        
         // Validate required fields
         if (!shiftFormData.title || !shiftFormData.location || !shiftFormData.facility_name || 
             !shiftFormData.start_time || !shiftFormData.end_time || !shiftFormData.hourly_rate) {
@@ -240,8 +235,6 @@ const Admin: React.FC = () => {
             .insert([shiftData]);
         }
       } else if (activeTab === 'skills') {
-        console.log('Submitting skill data:', skillFormData);
-        
         // Validate required fields
         if (!skillFormData.name || !skillFormData.category) {
           throw new Error('Please fill in all required fields');
@@ -258,8 +251,6 @@ const Admin: React.FC = () => {
             .insert([skillFormData]);
         }
       } else if (activeTab === 'paths') {
-        console.log('Submitting career path data:', pathFormData);
-        
         // Validate required fields
         if (!pathFormData.title || !pathFormData.current_role || !pathFormData.target_role || 
             !pathFormData.salary_increase || !pathFormData.time_to_complete) {
@@ -288,7 +279,6 @@ const Admin: React.FC = () => {
         throw result.error;
       }
 
-      console.log('Successfully saved:', result);
       setSubmitMessage({
         type: 'success',
         text: `${getTabLabel()} ${editingItem ? 'updated' : 'created'} successfully!`
@@ -362,7 +352,6 @@ const Admin: React.FC = () => {
   };
 
   const handleEdit = (item: any) => {
-    console.log('Editing item:', item);
     setEditingItem(item);
     
     if (activeTab === 'jobs') {
@@ -419,10 +408,11 @@ const Admin: React.FC = () => {
 
     // Scroll to form when editing
     setTimeout(() => {
-      document
-        .getElementById('add-edit-form')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 0);
+      const formElement = document.getElementById('add-edit-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   const handleDelete = async (id: string, table: string) => {
@@ -545,16 +535,14 @@ const Admin: React.FC = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-primary-900">Admin Dashboard</h1>
             <div className="flex gap-4">
-              <Button
+              <button
                 onClick={handleAddNewClick}
-                variant="primary"
-                size="md"
                 disabled={isLoading}
-                className="inline-flex items-center justify-center font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-500 hover:bg-primary-600 text-white focus:ring-primary-500 text-base px-5 py-2.5"
+                className="inline-flex items-center justify-center font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-500 hover:bg-primary-600 text-white focus:ring-primary-500 text-base px-5 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add New {getTabLabel()}
-              </Button>
+              </button>
               <Button
                 onClick={() => setIsAuthenticated(false)}
                 variant="outline"
@@ -578,7 +566,7 @@ const Admin: React.FC = () => {
         )}
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-gray-200 mb-8">
+        <div className="flex border-b border-gray-200 mb-8 overflow-x-auto">
           {[
             { key: 'jobs', label: 'Jobs', count: jobs.length },
             { key: 'shifts', label: 'Shifts', count: shifts.length },
@@ -588,12 +576,11 @@ const Admin: React.FC = () => {
             <button
               key={tab.key}
               onClick={() => {
-                console.log('Switching to tab:', tab.key);
                 setActiveTab(tab.key as any);
                 setShowForm(false);
                 resetForm();
               }}
-              className={`px-6 py-3 font-medium text-sm border-b-2 ${
+              className={`px-6 py-3 font-medium text-sm border-b-2 whitespace-nowrap ${
                 activeTab === tab.key
                   ? 'border-primary-500 text-primary-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
