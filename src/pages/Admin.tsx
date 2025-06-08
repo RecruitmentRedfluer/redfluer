@@ -185,6 +185,12 @@ const Admin: React.FC = () => {
       
       if (activeTab === 'jobs') {
         console.log('Submitting job data:', jobFormData);
+        
+        // Validate required fields
+        if (!jobFormData.title || !jobFormData.location || !jobFormData.salary || !jobFormData.description) {
+          throw new Error('Please fill in all required fields');
+        }
+        
         if (editingItem) {
           result = await supabase
             .from('job_postings')
@@ -203,6 +209,13 @@ const Admin: React.FC = () => {
         }
       } else if (activeTab === 'shifts') {
         console.log('Submitting shift data:', shiftFormData);
+        
+        // Validate required fields
+        if (!shiftFormData.title || !shiftFormData.location || !shiftFormData.facility_name || 
+            !shiftFormData.start_time || !shiftFormData.end_time || !shiftFormData.hourly_rate) {
+          throw new Error('Please fill in all required fields');
+        }
+        
         const shiftData = {
           ...shiftFormData,
           hourly_rate: parseFloat(shiftFormData.hourly_rate),
@@ -221,6 +234,12 @@ const Admin: React.FC = () => {
         }
       } else if (activeTab === 'skills') {
         console.log('Submitting skill data:', skillFormData);
+        
+        // Validate required fields
+        if (!skillFormData.name || !skillFormData.category) {
+          throw new Error('Please fill in all required fields');
+        }
+        
         if (editingItem) {
           result = await supabase
             .from('skills')
@@ -233,6 +252,13 @@ const Admin: React.FC = () => {
         }
       } else if (activeTab === 'paths') {
         console.log('Submitting career path data:', pathFormData);
+        
+        // Validate required fields
+        if (!pathFormData.title || !pathFormData.current_role || !pathFormData.target_role || 
+            !pathFormData.salary_increase || !pathFormData.time_to_complete) {
+          throw new Error('Please fill in all required fields');
+        }
+        
         const pathData = {
           ...pathFormData,
           required_skills: pathFormData.required_skills.filter(skill => skill.trim() !== '')
@@ -258,7 +284,7 @@ const Admin: React.FC = () => {
       console.log('Successfully saved:', result);
       setSubmitMessage({
         type: 'success',
-        text: `${activeTab.slice(0, -1)} ${editingItem ? 'updated' : 'created'} successfully!`
+        text: `${getTabLabel()} ${editingItem ? 'updated' : 'created'} successfully!`
       });
       
       resetForm();
@@ -268,11 +294,11 @@ const Admin: React.FC = () => {
       setTimeout(() => {
         setSubmitMessage(null);
       }, 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving:', error);
       setSubmitMessage({
         type: 'error',
-        text: `Failed to save ${activeTab.slice(0, -1)}. Please check all required fields and try again.`
+        text: error.message || `Failed to save ${getTabLabel()}. Please check all required fields and try again.`
       });
     } finally {
       setIsLoading(false);
@@ -386,7 +412,7 @@ const Admin: React.FC = () => {
   };
 
   const handleDelete = async (id: string, table: string) => {
-    if (!confirm(`Are you sure you want to delete this ${activeTab.slice(0, -1)}?`)) return;
+    if (!confirm(`Are you sure you want to delete this ${getTabLabel().toLowerCase()}?`)) return;
 
     setIsLoading(true);
     try {
@@ -399,7 +425,7 @@ const Admin: React.FC = () => {
       
       setSubmitMessage({
         type: 'success',
-        text: `${activeTab.slice(0, -1)} deleted successfully!`
+        text: `${getTabLabel()} deleted successfully!`
       });
       
       await loadAllData();
@@ -510,6 +536,7 @@ const Admin: React.FC = () => {
                 variant="primary"
                 size="md"
                 disabled={isLoading}
+                className="inline-flex items-center justify-center font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-500 hover:bg-primary-600 text-white focus:ring-primary-500 text-base px-5 py-2.5"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add New {getTabLabel()}
