@@ -166,7 +166,9 @@ const Admin: React.FC = () => {
     }
   };
 
-  const showAddForm = () => {
+  // Simple, direct button click handler
+  const handleAddNewButtonClick = () => {
+    console.log('Button clicked! Active tab:', activeTab);
     setShowForm(true);
     setEditingItem(null);
     resetForm();
@@ -537,9 +539,10 @@ const Admin: React.FC = () => {
             <div className="flex gap-4">
               <button
                 type="button"
-                onClick={showAddForm}
+                onClick={handleAddNewButtonClick}
                 disabled={isLoading}
                 className="inline-flex items-center justify-center px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ minWidth: '140px' }}
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add New {getTabLabel()}
