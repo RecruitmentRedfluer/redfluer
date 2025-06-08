@@ -172,6 +172,13 @@ const Admin: React.FC = () => {
     setEditingItem(null);
     resetForm();
     setSubmitMessage(null);
+
+    // Wait for the next paint so the form exists in the DOM, then scroll to it.
+    setTimeout(() => {
+      document
+        .getElementById('add-edit-form')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -409,6 +416,13 @@ const Admin: React.FC = () => {
     
     setShowForm(true);
     setSubmitMessage(null);
+
+    // Scroll to form when editing
+    setTimeout(() => {
+      document
+        .getElementById('add-edit-form')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
   };
 
   const handleDelete = async (id: string, table: string) => {
@@ -592,7 +606,7 @@ const Admin: React.FC = () => {
 
         {/* Forms */}
         {showForm && (
-          <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+          <div id="add-edit-form" className="bg-white p-6 rounded-lg shadow-md mb-8">
             <h2 className="text-xl font-semibold text-primary-900 mb-4">
               {editingItem ? 'Edit' : 'Add New'} {getTabLabel()}
             </h2>
