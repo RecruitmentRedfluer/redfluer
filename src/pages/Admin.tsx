@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import Button from '../components/ui/Button';
-import { Plus, Edit, Trash2, Eye, EyeOff, Calendar, Clock, Award, BookOpen } from 'lucide-react';
-import { getAllShifts, createShift, updateShift, deleteShift, type Shift } from '../lib/shifts';
-import { getAllSkills, createSkill, updateSkill, deleteSkill, getAllCareerPaths, createCareerPath, updateCareerPath, deleteCareerPath, type Skill, type CareerPath } from '../lib/skills';
+import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 
 interface JobPosting {
   id: string;
@@ -18,15 +16,61 @@ interface JobPosting {
   is_active: boolean;
 }
 
+interface Shift {
+  id: string;
+  title: string;
+  location: string;
+  facility_name: string;
+  start_time: string;
+  end_time: string;
+  hourly_rate: number;
+  sector: string;
+  requirements: string[];
+  urgency: string;
+  description?: string;
+  is_active: boolean;
+}
+
+interface Skill {
+  id: string;
+  name: string;
+  category: string;
+  description?: string;
+  duration?: string;
+  provider?: string;
+  earns_premium: boolean;
+  premium_rate?: string;
+  is_active: boolean;
+}
+
+interface CareerPath {
+  id: string;
+  title: string;
+  current_role: string;
+  target_role: string;
+  salary_increase: string;
+  required_skills: string[];
+  time_to_complete: string;
+  description?: string;
+  is_active: boolean;
+}
+
 const Admin: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState<'jobs' | 'shifts' | 'skills' | 'paths'>('jobs');
   
-  // Jobs state
+  // Data states
   const [jobs, setJobs] = useState<JobPosting[]>([]);
-  const [showJobForm, setShowJobForm] = useState(false);
-  const [editingJob, setEditingJob] = useState<JobPosting | null>(null);
+  const [shifts, setShifts] = useState<Shift[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [careerPaths, setCareerPaths] = useState<CareerPath[]>([]);
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [editingItem, setEditingItem] = useState<any>(null);
+  
+  // Form data states
   const [jobFormData, setJobFormData] = useState({
     title: '',
     location: '',
@@ -38,73 +82,49 @@ const Admin: React.FC = () => {
     is_active: true
   });
 
-  // Shifts state
-  const [shifts, setShifts] = useState<Shift[]>([]);
-  const [showShiftForm, setShowShiftForm] = useState(false);
-  const [editingShift, setEditingShift] = useState<Shift | null>(null);
   const [shiftFormData, setShiftFormData] = useState({
     title: '',
     location: '',
-    facilityName: '',
-    startTime: '',
-    endTime: '',
-    hourlyRate: '',
+    facility_name: '',
+    start_time: '',
+    end_time: '',
+    hourly_rate: '',
     sector: 'healthcare',
     requirements: [] as string[],
-    urgency: 'medium' as 'low' | 'medium' | 'high',
+    urgency: 'medium',
     description: '',
-    isActive: true
+    is_active: true
   });
-  const [requirementInput, setRequirementInput] = useState('');
 
-  // Skills state
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [showSkillForm, setShowSkillForm] = useState(false);
-  const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
   const [skillFormData, setSkillFormData] = useState({
     name: '',
     category: '',
     description: '',
     duration: '',
     provider: '',
-    earnsPremium: false,
-    premiumRate: '',
-    isActive: true
+    earns_premium: false,
+    premium_rate: '',
+    is_active: true
   });
 
-  // Career paths state
-  const [careerPaths, setCareerPaths] = useState<CareerPath[]>([]);
-  const [showPathForm, setShowPathForm] = useState(false);
-  const [editingPath, setEditingPath] = useState<CareerPath | null>(null);
   const [pathFormData, setPathFormData] = useState({
     title: '',
-    currentRole: '',
-    targetRole: '',
-    salaryIncrease: '',
-    requiredSkills: [] as string[],
-    timeToComplete: '',
+    current_role: '',
+    target_role: '',
+    salary_increase: '',
+    required_skills: [] as string[],
+    time_to_complete: '',
     description: '',
-    isActive: true
+    is_active: true
   });
-  const [skillInput, setSkillInput] = useState('');
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const ADMIN_PASSWORD = 'redfluer2024admin';
 
   useEffect(() => {
     if (isAuthenticated) {
-      if (activeTab === 'jobs') {
-        loadJobs();
-      } else if (activeTab === 'shifts') {
-        loadShifts();
-      } else if (activeTab === 'skills') {
-        loadSkills();
-      } else if (activeTab === 'paths') {
-        loadCareerPaths();
-      }
+      loadAllData();
     }
-  }, [isAuthenticated, activeTab]);
+  }, [isAuthenticated]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,92 +135,117 @@ const Admin: React.FC = () => {
     }
   };
 
-  const handleAddNewClick = () => {
-    if (activeTab === 'jobs') {
-      setShowJobForm(true);
-      setShowShiftForm(false);
-      setShowSkillForm(false);
-      setShowPathForm(false);
-      resetJobForm();
-    } else if (activeTab === 'shifts') {
-      setShowShiftForm(true);
-      setShowJobForm(false);
-      setShowSkillForm(false);
-      setShowPathForm(false);
-      resetShiftForm();
-    } else if (activeTab === 'skills') {
-      setShowSkillForm(true);
-      setShowJobForm(false);
-      setShowShiftForm(false);
-      setShowPathForm(false);
-      resetSkillForm();
-    } else if (activeTab === 'paths') {
-      setShowPathForm(true);
-      setShowJobForm(false);
-      setShowShiftForm(false);
-      setShowSkillForm(false);
-      resetPathForm();
-    }
-  };
-
-  // Jobs functions
-  const loadJobs = async () => {
+  const loadAllData = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('job_postings')
-        .select('*')
-        .order('posted_date', { ascending: false });
+      const [jobsData, shiftsData, skillsData, pathsData] = await Promise.all([
+        supabase.from('job_postings').select('*').order('posted_date', { ascending: false }),
+        supabase.from('shifts').select('*').order('created_at', { ascending: false }),
+        supabase.from('skills').select('*').order('category', { ascending: true }),
+        supabase.from('career_paths').select('*').order('created_at', { ascending: false })
+      ]);
 
-      if (error) throw error;
-      setJobs(data || []);
+      if (jobsData.error) throw jobsData.error;
+      if (shiftsData.error) throw shiftsData.error;
+      if (skillsData.error) throw skillsData.error;
+      if (pathsData.error) throw pathsData.error;
+
+      setJobs(jobsData.data || []);
+      setShifts(shiftsData.data || []);
+      setSkills(skillsData.data || []);
+      setCareerPaths(pathsData.data || []);
     } catch (error) {
-      console.error('Error loading jobs:', error);
-      alert('Failed to load jobs');
+      console.error('Error loading data:', error);
+      alert('Failed to load data');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleJobSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      if (editingJob) {
-        const { error } = await supabase
-          .from('job_postings')
-          .update({
-            ...jobFormData,
-            expires_at: jobFormData.expires_at || null
-          })
-          .eq('id', editingJob.id);
-
-        if (error) throw error;
-        alert('Job updated successfully!');
-      } else {
-        const { error } = await supabase
-          .from('job_postings')
-          .insert([{
-            ...jobFormData,
-            expires_at: jobFormData.expires_at || null
-          }]);
-
-        if (error) throw error;
-        alert('Job created successfully!');
+      let result;
+      
+      if (activeTab === 'jobs') {
+        if (editingItem) {
+          result = await supabase
+            .from('job_postings')
+            .update({
+              ...jobFormData,
+              expires_at: jobFormData.expires_at || null
+            })
+            .eq('id', editingItem.id);
+        } else {
+          result = await supabase
+            .from('job_postings')
+            .insert([{
+              ...jobFormData,
+              expires_at: jobFormData.expires_at || null
+            }]);
+        }
+      } else if (activeTab === 'shifts') {
+        const shiftData = {
+          ...shiftFormData,
+          hourly_rate: parseFloat(shiftFormData.hourly_rate),
+          requirements: shiftFormData.requirements.filter(req => req.trim() !== '')
+        };
+        
+        if (editingItem) {
+          result = await supabase
+            .from('shifts')
+            .update(shiftData)
+            .eq('id', editingItem.id);
+        } else {
+          result = await supabase
+            .from('shifts')
+            .insert([shiftData]);
+        }
+      } else if (activeTab === 'skills') {
+        if (editingItem) {
+          result = await supabase
+            .from('skills')
+            .update(skillFormData)
+            .eq('id', editingItem.id);
+        } else {
+          result = await supabase
+            .from('skills')
+            .insert([skillFormData]);
+        }
+      } else if (activeTab === 'paths') {
+        const pathData = {
+          ...pathFormData,
+          required_skills: pathFormData.required_skills.filter(skill => skill.trim() !== '')
+        };
+        
+        if (editingItem) {
+          result = await supabase
+            .from('career_paths')
+            .update(pathData)
+            .eq('id', editingItem.id);
+        } else {
+          result = await supabase
+            .from('career_paths')
+            .insert([pathData]);
+        }
       }
 
-      resetJobForm();
-      loadJobs();
+      if (result?.error) throw result.error;
+
+      alert(`${activeTab.slice(0, -1)} ${editingItem ? 'updated' : 'created'} successfully!`);
+      resetForm();
+      loadAllData();
     } catch (error) {
-      console.error('Error saving job:', error);
-      alert('Failed to save job');
+      console.error('Error saving:', error);
+      alert('Failed to save');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const resetJobForm = () => {
+  const resetForm = () => {
     setJobFormData({
       title: '',
       location: '',
@@ -211,381 +256,134 @@ const Admin: React.FC = () => {
       expires_at: '',
       is_active: true
     });
-    setEditingJob(null);
-    setShowJobForm(false);
-  };
-
-  const handleEditJob = (job: JobPosting) => {
-    setEditingJob(job);
-    setJobFormData({
-      title: job.title,
-      location: job.location,
-      contract_type: job.contract_type,
-      role: job.role,
-      salary: job.salary,
-      description: job.description,
-      expires_at: job.expires_at ? job.expires_at.split('T')[0] : '',
-      is_active: job.is_active
-    });
-    setShowJobForm(true);
-    setShowShiftForm(false);
-    setShowSkillForm(false);
-    setShowPathForm(false);
-  };
-
-  const handleDeleteJob = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this job?')) return;
-
-    setIsLoading(true);
-    try {
-      const { error } = await supabase
-        .from('job_postings')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      alert('Job deleted successfully!');
-      loadJobs();
-    } catch (error) {
-      console.error('Error deleting job:', error);
-      alert('Failed to delete job');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const toggleJobStatus = async (job: JobPosting) => {
-    setIsLoading(true);
-    try {
-      const { error } = await supabase
-        .from('job_postings')
-        .update({ is_active: !job.is_active })
-        .eq('id', job.id);
-
-      if (error) throw error;
-      loadJobs();
-    } catch (error) {
-      console.error('Error updating job status:', error);
-      alert('Failed to update job status');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Shifts functions
-  const loadShifts = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAllShifts();
-      setShifts(data);
-    } catch (error) {
-      console.error('Error loading shifts:', error);
-      alert('Failed to load shifts');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleShiftSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const shiftData = {
-        ...shiftFormData,
-        hourlyRate: parseFloat(shiftFormData.hourlyRate),
-        startTime: new Date(shiftFormData.startTime).toISOString(),
-        endTime: new Date(shiftFormData.endTime).toISOString(),
-      };
-
-      if (editingShift) {
-        await updateShift(editingShift.id, shiftData);
-        alert('Shift updated successfully!');
-      } else {
-        await createShift(shiftData);
-        alert('Shift created successfully!');
-      }
-
-      resetShiftForm();
-      loadShifts();
-    } catch (error) {
-      console.error('Error saving shift:', error);
-      alert('Failed to save shift');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const resetShiftForm = () => {
     setShiftFormData({
       title: '',
       location: '',
-      facilityName: '',
-      startTime: '',
-      endTime: '',
-      hourlyRate: '',
+      facility_name: '',
+      start_time: '',
+      end_time: '',
+      hourly_rate: '',
       sector: 'healthcare',
       requirements: [],
       urgency: 'medium',
       description: '',
-      isActive: true
+      is_active: true
     });
-    setEditingShift(null);
-    setShowShiftForm(false);
-    setRequirementInput('');
-  };
-
-  const handleEditShift = (shift: Shift) => {
-    setEditingShift(shift);
-    setShiftFormData({
-      title: shift.title,
-      location: shift.location,
-      facilityName: shift.facilityName,
-      startTime: new Date(shift.startTime).toISOString().slice(0, 16),
-      endTime: new Date(shift.endTime).toISOString().slice(0, 16),
-      hourlyRate: shift.hourlyRate.toString(),
-      sector: shift.sector,
-      requirements: shift.requirements || [],
-      urgency: shift.urgency,
-      description: shift.description || '',
-      isActive: shift.isActive
-    });
-    setShowShiftForm(true);
-    setShowJobForm(false);
-    setShowSkillForm(false);
-    setShowPathForm(false);
-  };
-
-  const handleDeleteShift = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this shift?')) return;
-
-    setIsLoading(true);
-    try {
-      await deleteShift(id);
-      alert('Shift deleted successfully!');
-      loadShifts();
-    } catch (error) {
-      console.error('Error deleting shift:', error);
-      alert('Failed to delete shift');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const addRequirement = () => {
-    if (requirementInput.trim() && !shiftFormData.requirements.includes(requirementInput.trim())) {
-      setShiftFormData({
-        ...shiftFormData,
-        requirements: [...shiftFormData.requirements, requirementInput.trim()]
-      });
-      setRequirementInput('');
-    }
-  };
-
-  const removeRequirement = (index: number) => {
-    setShiftFormData({
-      ...shiftFormData,
-      requirements: shiftFormData.requirements.filter((_, i) => i !== index)
-    });
-  };
-
-  // Skills functions
-  const loadSkills = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAllSkills();
-      setSkills(data);
-    } catch (error) {
-      console.error('Error loading skills:', error);
-      alert('Failed to load skills');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSkillSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      if (editingSkill) {
-        await updateSkill(editingSkill.id, skillFormData);
-        alert('Skill updated successfully!');
-      } else {
-        await createSkill(skillFormData);
-        alert('Skill created successfully!');
-      }
-
-      resetSkillForm();
-      loadSkills();
-    } catch (error) {
-      console.error('Error saving skill:', error);
-      alert('Failed to save skill');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const resetSkillForm = () => {
     setSkillFormData({
       name: '',
       category: '',
       description: '',
       duration: '',
       provider: '',
-      earnsPremium: false,
-      premiumRate: '',
-      isActive: true
+      earns_premium: false,
+      premium_rate: '',
+      is_active: true
     });
-    setEditingSkill(null);
-    setShowSkillForm(false);
-  };
-
-  const handleEditSkill = (skill: Skill) => {
-    setEditingSkill(skill);
-    setSkillFormData({
-      name: skill.name,
-      category: skill.category,
-      description: skill.description || '',
-      duration: skill.duration || '',
-      provider: skill.provider || '',
-      earnsPremium: skill.earnsPremium,
-      premiumRate: skill.premiumRate || '',
-      isActive: skill.isActive
-    });
-    setShowSkillForm(true);
-    setShowJobForm(false);
-    setShowShiftForm(false);
-    setShowPathForm(false);
-  };
-
-  const handleDeleteSkill = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this skill?')) return;
-
-    setIsLoading(true);
-    try {
-      await deleteSkill(id);
-      alert('Skill deleted successfully!');
-      loadSkills();
-    } catch (error) {
-      console.error('Error deleting skill:', error);
-      alert('Failed to delete skill');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Career paths functions
-  const loadCareerPaths = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAllCareerPaths();
-      setCareerPaths(data);
-    } catch (error) {
-      console.error('Error loading career paths:', error);
-      alert('Failed to load career paths');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handlePathSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      if (editingPath) {
-        await updateCareerPath(editingPath.id, pathFormData);
-        alert('Career path updated successfully!');
-      } else {
-        await createCareerPath(pathFormData);
-        alert('Career path created successfully!');
-      }
-
-      resetPathForm();
-      loadCareerPaths();
-    } catch (error) {
-      console.error('Error saving career path:', error);
-      alert('Failed to save career path');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const resetPathForm = () => {
     setPathFormData({
       title: '',
-      currentRole: '',
-      targetRole: '',
-      salaryIncrease: '',
-      requiredSkills: [],
-      timeToComplete: '',
+      current_role: '',
+      target_role: '',
+      salary_increase: '',
+      required_skills: [],
+      time_to_complete: '',
       description: '',
-      isActive: true
+      is_active: true
     });
-    setEditingPath(null);
-    setShowPathForm(false);
-    setSkillInput('');
+    setEditingItem(null);
+    setShowForm(false);
   };
 
-  const handleEditPath = (path: CareerPath) => {
-    setEditingPath(path);
-    setPathFormData({
-      title: path.title,
-      currentRole: path.currentRole,
-      targetRole: path.targetRole,
-      salaryIncrease: path.salaryIncrease,
-      requiredSkills: path.requiredSkills || [],
-      timeToComplete: path.timeToComplete,
-      description: path.description || '',
-      isActive: path.isActive
-    });
-    setShowPathForm(true);
-    setShowJobForm(false);
-    setShowShiftForm(false);
-    setShowSkillForm(false);
+  const handleEdit = (item: any) => {
+    setEditingItem(item);
+    
+    if (activeTab === 'jobs') {
+      setJobFormData({
+        title: item.title,
+        location: item.location,
+        contract_type: item.contract_type,
+        role: item.role,
+        salary: item.salary,
+        description: item.description,
+        expires_at: item.expires_at ? item.expires_at.split('T')[0] : '',
+        is_active: item.is_active
+      });
+    } else if (activeTab === 'shifts') {
+      setShiftFormData({
+        title: item.title,
+        location: item.location,
+        facility_name: item.facility_name,
+        start_time: item.start_time,
+        end_time: item.end_time,
+        hourly_rate: item.hourly_rate.toString(),
+        sector: item.sector,
+        requirements: item.requirements || [],
+        urgency: item.urgency,
+        description: item.description || '',
+        is_active: item.is_active
+      });
+    } else if (activeTab === 'skills') {
+      setSkillFormData({
+        name: item.name,
+        category: item.category,
+        description: item.description || '',
+        duration: item.duration || '',
+        provider: item.provider || '',
+        earns_premium: item.earns_premium,
+        premium_rate: item.premium_rate || '',
+        is_active: item.is_active
+      });
+    } else if (activeTab === 'paths') {
+      setPathFormData({
+        title: item.title,
+        current_role: item.current_role,
+        target_role: item.target_role,
+        salary_increase: item.salary_increase,
+        required_skills: item.required_skills || [],
+        time_to_complete: item.time_to_complete,
+        description: item.description || '',
+        is_active: item.is_active
+      });
+    }
+    
+    setShowForm(true);
   };
 
-  const handleDeletePath = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this career path?')) return;
+  const handleDelete = async (id: string, table: string) => {
+    if (!confirm(`Are you sure you want to delete this ${activeTab.slice(0, -1)}?`)) return;
 
     setIsLoading(true);
     try {
-      await deleteCareerPath(id);
-      alert('Career path deleted successfully!');
-      loadCareerPaths();
+      const { error } = await supabase
+        .from(table)
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      alert(`${activeTab.slice(0, -1)} deleted successfully!`);
+      loadAllData();
     } catch (error) {
-      console.error('Error deleting career path:', error);
-      alert('Failed to delete career path');
+      console.error('Error deleting:', error);
+      alert('Failed to delete');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const addSkill = () => {
-    if (skillInput.trim() && !pathFormData.requiredSkills.includes(skillInput.trim())) {
-      setPathFormData({
-        ...pathFormData,
-        requiredSkills: [...pathFormData.requiredSkills, skillInput.trim()]
-      });
-      setSkillInput('');
-    }
-  };
+  const toggleStatus = async (item: any, table: string) => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from(table)
+        .update({ is_active: !item.is_active })
+        .eq('id', item.id);
 
-  const removeSkill = (index: number) => {
-    setPathFormData({
-      ...pathFormData,
-      requiredSkills: pathFormData.requiredSkills.filter((_, i) => i !== index)
-    });
-  };
-
-  const getTabTitle = () => {
-    switch (activeTab) {
-      case 'jobs': return 'Job';
-      case 'shifts': return 'Shift';
-      case 'skills': return 'Skill';
-      case 'paths': return 'Career Path';
-      default: return 'Item';
+      if (error) throw error;
+      loadAllData();
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update status');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -617,6 +415,26 @@ const Admin: React.FC = () => {
     );
   }
 
+  const getCurrentData = () => {
+    switch (activeTab) {
+      case 'jobs': return jobs;
+      case 'shifts': return shifts;
+      case 'skills': return skills;
+      case 'paths': return careerPaths;
+      default: return [];
+    }
+  };
+
+  const getCurrentTable = () => {
+    switch (activeTab) {
+      case 'jobs': return 'job_postings';
+      case 'shifts': return 'shifts';
+      case 'skills': return 'skills';
+      case 'paths': return 'career_paths';
+      default: return '';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-white shadow-sm border-b">
@@ -625,12 +443,15 @@ const Admin: React.FC = () => {
             <h1 className="text-2xl font-bold text-primary-900">Admin Dashboard</h1>
             <div className="flex gap-4">
               <Button
-                onClick={handleAddNewClick}
+                onClick={() => {
+                  setShowForm(!showForm);
+                  resetForm();
+                }}
                 variant="primary"
                 size="md"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add New {getTabTitle()}
+                Add New {activeTab.slice(0, -1).replace(/([A-Z])/g, ' $1').trim()}
               </Button>
               <Button
                 onClick={() => setIsAuthenticated(false)}
@@ -641,88 +462,46 @@ const Admin: React.FC = () => {
               </Button>
             </div>
           </div>
-          
-          {/* Tab Navigation */}
-          <div className="flex border-b border-gray-200 mt-4">
-            <button
-              onClick={() => {
-                setActiveTab('jobs');
-                setShowJobForm(false);
-                setShowShiftForm(false);
-                setShowSkillForm(false);
-                setShowPathForm(false);
-              }}
-              className={`px-6 py-3 font-medium text-sm border-b-2 ${
-                activeTab === 'jobs'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Job Postings
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('shifts');
-                setShowJobForm(false);
-                setShowShiftForm(false);
-                setShowSkillForm(false);
-                setShowPathForm(false);
-              }}
-              className={`px-6 py-3 font-medium text-sm border-b-2 ${
-                activeTab === 'shifts'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Shift Management
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('skills');
-                setShowJobForm(false);
-                setShowShiftForm(false);
-                setShowSkillForm(false);
-                setShowPathForm(false);
-              }}
-              className={`px-6 py-3 font-medium text-sm border-b-2 ${
-                activeTab === 'skills'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Skills Management
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('paths');
-                setShowJobForm(false);
-                setShowShiftForm(false);
-                setShowSkillForm(false);
-                setShowPathForm(false);
-              }}
-              className={`px-6 py-3 font-medium text-sm border-b-2 ${
-                activeTab === 'paths'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Career Paths
-            </button>
-          </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Jobs Tab */}
-        {activeTab === 'jobs' && (
-          <>
-            {/* Job Form */}
-            {showJobForm && (
-              <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-                <h2 className="text-xl font-semibold text-primary-900 mb-4">
-                  {editingJob ? 'Edit Job' : 'Add New Job'}
-                </h2>
-                <form onSubmit={handleJobSubmit} className="space-y-4">
+        {/* Tab Navigation */}
+        <div className="flex border-b border-gray-200 mb-8">
+          {[
+            { key: 'jobs', label: 'Jobs', count: jobs.length },
+            { key: 'shifts', label: 'Shifts', count: shifts.length },
+            { key: 'skills', label: 'Skills', count: skills.length },
+            { key: 'paths', label: 'Career Paths', count: careerPaths.length }
+          ].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => {
+                setActiveTab(tab.key as any);
+                setShowForm(false);
+                resetForm();
+              }}
+              className={`px-6 py-3 font-medium text-sm border-b-2 ${
+                activeTab === tab.key
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {tab.label} ({tab.count})
+            </button>
+          ))}
+        </div>
+
+        {/* Forms */}
+        {showForm && (
+          <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 className="text-xl font-semibold text-primary-900 mb-4">
+              {editingItem ? 'Edit' : 'Add New'} {activeTab.slice(0, -1).replace(/([A-Z])/g, ' $1').trim()}
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Job Form */}
+              {activeTab === 'jobs' && (
+                <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Job Title *</label>
@@ -822,103 +601,12 @@ const Admin: React.FC = () => {
                       Job is active
                     </label>
                   </div>
-                  <div className="flex gap-4">
-                    <Button type="submit" variant="primary" size="md" disabled={isLoading}>
-                      {isLoading ? 'Saving...' : (editingJob ? 'Update Job' : 'Create Job')}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={resetJobForm}
-                      variant="outline"
-                      size="md"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {/* Jobs List */}
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-primary-900">All Jobs ({jobs.length})</h2>
-              </div>
-              
-              {isLoading ? (
-                <div className="p-6 text-center">Loading jobs...</div>
-              ) : jobs.length === 0 ? (
-                <div className="p-6 text-center text-gray-500">No jobs found</div>
-              ) : (
-                <div className="divide-y divide-gray-200">
-                  {jobs.map(job => (
-                    <div key={job.id} className="p-6">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold text-primary-900">{job.title}</h3>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              job.is_active ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {job.is_active ? 'Active' : 'Inactive'}
-                            </span>
-                            <span className="bg-primary-100 text-primary-700 px-2 py-1 rounded-full text-xs font-medium">
-                              {job.contract_type}
-                            </span>
-                          </div>
-                          <div className="text-gray-600 mb-2">
-                            <span className="mr-4">📍 {job.location}</span>
-                            <span className="mr-4">💰 {job.salary}</span>
-                            <span>👤 {job.role.replace(/-/g, ' ')}</span>
-                          </div>
-                          <p className="text-gray-700 text-sm mb-2">{job.description.substring(0, 150)}...</p>
-                          <div className="text-xs text-gray-500">
-                            Posted: {new Date(job.posted_date).toLocaleDateString()}
-                            {job.expires_at && ` • Expires: ${new Date(job.expires_at).toLocaleDateString()}`}
-                          </div>
-                        </div>
-                        <div className="flex gap-2 ml-4">
-                          <button
-                            onClick={() => toggleJobStatus(job)}
-                            className="p-2 text-gray-600 hover:text-primary-600"
-                            title={job.is_active ? 'Deactivate' : 'Activate'}
-                          >
-                            {job.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </button>
-                          <button
-                            onClick={() => handleEditJob(job)}
-                            className="p-2 text-gray-600 hover:text-primary-600"
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteJob(job.id)}
-                            className="p-2 text-gray-600 hover:text-error-600"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                </>
               )}
-            </div>
-          </>
-        )}
 
-        {/* Shifts Tab */}
-        {activeTab === 'shifts' && (
-          <>
-            {/* Shift Form */}
-            {showShiftForm && (
-              <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-                <h2 className="text-xl font-semibold text-primary-900 mb-4">
-                  {editingShift ? 'Edit Shift' : 'Add New Shift'}
-                </h2>
-                <form onSubmit={handleShiftSubmit} className="space-y-4">
+              {/* Shift Form */}
+              {activeTab === 'shifts' && (
+                <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Shift Title *</label>
@@ -926,16 +614,6 @@ const Admin: React.FC = () => {
                         type="text"
                         value={shiftFormData.title}
                         onChange={(e) => setShiftFormData({...shiftFormData, title: e.target.value})}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Facility Name *</label>
-                      <input
-                        type="text"
-                        value={shiftFormData.facilityName}
-                        onChange={(e) => setShiftFormData({...shiftFormData, facilityName: e.target.value})}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       />
@@ -951,12 +629,22 @@ const Admin: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Hourly Rate (£) *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Facility Name *</label>
+                      <input
+                        type="text"
+                        value={shiftFormData.facility_name}
+                        onChange={(e) => setShiftFormData({...shiftFormData, facility_name: e.target.value})}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Hourly Rate *</label>
                       <input
                         type="number"
                         step="0.01"
-                        value={shiftFormData.hourlyRate}
-                        onChange={(e) => setShiftFormData({...shiftFormData, hourlyRate: e.target.value})}
+                        value={shiftFormData.hourly_rate}
+                        onChange={(e) => setShiftFormData({...shiftFormData, hourly_rate: e.target.value})}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       />
@@ -965,8 +653,8 @@ const Admin: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Start Time *</label>
                       <input
                         type="datetime-local"
-                        value={shiftFormData.startTime}
-                        onChange={(e) => setShiftFormData({...shiftFormData, startTime: e.target.value})}
+                        value={shiftFormData.start_time}
+                        onChange={(e) => setShiftFormData({...shiftFormData, start_time: e.target.value})}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       />
@@ -975,8 +663,8 @@ const Admin: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">End Time *</label>
                       <input
                         type="datetime-local"
-                        value={shiftFormData.endTime}
-                        onChange={(e) => setShiftFormData({...shiftFormData, endTime: e.target.value})}
+                        value={shiftFormData.end_time}
+                        onChange={(e) => setShiftFormData({...shiftFormData, end_time: e.target.value})}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       />
@@ -989,7 +677,7 @@ const Admin: React.FC = () => {
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       >
-                        <option value="healthcare">General Healthcare</option>
+                        <option value="healthcare">Healthcare</option>
                         <option value="mental-health">Mental Health</option>
                         <option value="learning-disabilities">Learning Disabilities</option>
                         <option value="dementia">Specialist Dementia</option>
@@ -1002,48 +690,16 @@ const Admin: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Urgency *</label>
                       <select
                         value={shiftFormData.urgency}
-                        onChange={(e) => setShiftFormData({...shiftFormData, urgency: e.target.value as 'low' | 'medium' | 'high'})}
+                        onChange={(e) => setShiftFormData({...shiftFormData, urgency: e.target.value})}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       >
-                        <option value="low">Low Priority</option>
-                        <option value="medium">Medium Priority</option>
-                        <option value="high">High Priority</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
                       </select>
                     </div>
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Requirements</label>
-                    <div className="flex gap-2 mb-2">
-                      <input
-                        type="text"
-                        value={requirementInput}
-                        onChange={(e) => setRequirementInput(e.target.value)}
-                        placeholder="Add a requirement..."
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addRequirement())}
-                      />
-                      <Button type="button" onClick={addRequirement} variant="outline" size="md">
-                        Add
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {shiftFormData.requirements.map((req, index) => (
-                        <span key={index} className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm flex items-center">
-                          {req}
-                          <button
-                            type="button"
-                            onClick={() => removeRequirement(index)}
-                            className="ml-2 text-primary-500 hover:text-primary-700"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                     <textarea
@@ -1053,137 +709,34 @@ const Admin: React.FC = () => {
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                     />
                   </div>
-                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Requirements (one per line)</label>
+                    <textarea
+                      value={shiftFormData.requirements.join('\n')}
+                      onChange={(e) => setShiftFormData({...shiftFormData, requirements: e.target.value.split('\n')})}
+                      rows={3}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                      placeholder="DBS Check&#10;Healthcare Experience&#10;Valid Driving License"
+                    />
+                  </div>
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       id="shift_is_active"
-                      checked={shiftFormData.isActive}
-                      onChange={(e) => setShiftFormData({...shiftFormData, isActive: e.target.checked})}
+                      checked={shiftFormData.is_active}
+                      onChange={(e) => setShiftFormData({...shiftFormData, is_active: e.target.checked})}
                       className="mr-2"
                     />
                     <label htmlFor="shift_is_active" className="text-sm font-medium text-gray-700">
                       Shift is active
                     </label>
                   </div>
-                  
-                  <div className="flex gap-4">
-                    <Button type="submit" variant="primary" size="md" disabled={isLoading}>
-                      {isLoading ? 'Saving...' : (editingShift ? 'Update Shift' : 'Create Shift')}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={resetShiftForm}
-                      variant="outline"
-                      size="md"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {/* Shifts List */}
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-primary-900">All Shifts ({shifts.length})</h2>
-              </div>
-              
-              {isLoading ? (
-                <div className="p-6 text-center">Loading shifts...</div>
-              ) : shifts.length === 0 ? (
-                <div className="p-6 text-center text-gray-500">No shifts found</div>
-              ) : (
-                <div className="divide-y divide-gray-200">
-                  {shifts.map(shift => (
-                    <div key={shift.id} className="p-6">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold text-primary-900">{shift.title}</h3>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              shift.isActive ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {shift.isActive ? 'Active' : 'Inactive'}
-                            </span>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              shift.urgency === 'high' ? 'bg-error-100 text-error-800' :
-                              shift.urgency === 'medium' ? 'bg-warning-100 text-warning-800' :
-                              'bg-success-100 text-success-800'
-                            }`}>
-                              {shift.urgency} priority
-                            </span>
-                          </div>
-                          <div className="text-gray-600 mb-2">
-                            <span className="mr-4">🏥 {shift.facilityName}</span>
-                            <span className="mr-4">📍 {shift.location}</span>
-                            <span className="mr-4">💰 £{shift.hourlyRate}/hour</span>
-                            <span>🏷️ {shift.sector.replace(/-/g, ' ')}</span>
-                          </div>
-                          <div className="text-gray-600 mb-2 flex items-center">
-                            <Calendar className="w-4 h-4 mr-1" />
-                            <span className="mr-4">
-                              {new Date(shift.startTime).toLocaleDateString('en-GB')}
-                            </span>
-                            <Clock className="w-4 h-4 mr-1" />
-                            <span>
-                              {new Date(shift.startTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} - 
-                              {new Date(shift.endTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </div>
-                          {shift.requirements && shift.requirements.length > 0 && (
-                            <div className="mb-2">
-                              <span className="text-sm text-gray-500">Requirements: </span>
-                              {shift.requirements.map((req, index) => (
-                                <span key={index} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs mr-1">
-                                  {req}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          {shift.description && (
-                            <p className="text-gray-700 text-sm mb-2">{shift.description}</p>
-                          )}
-                          <div className="text-xs text-gray-500">
-                            Created: {new Date(shift.createdAt).toLocaleDateString()}
-                          </div>
-                        </div>
-                        <div className="flex gap-2 ml-4">
-                          <button
-                            onClick={() => handleEditShift(shift)}
-                            className="p-2 text-gray-600 hover:text-primary-600"
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteShift(shift.id)}
-                            className="p-2 text-gray-600 hover:text-error-600"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                </>
               )}
-            </div>
-          </>
-        )}
 
-        {/* Skills Tab */}
-        {activeTab === 'skills' && (
-          <>
-            {/* Skill Form */}
-            {showSkillForm && (
-              <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-                <h2 className="text-xl font-semibold text-primary-900 mb-4">
-                  {editingSkill ? 'Edit Skill' : 'Add New Skill'}
-                </h2>
-                <form onSubmit={handleSkillSubmit} className="space-y-4">
+              {/* Skill Form */}
+              {activeTab === 'skills' && (
+                <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Skill Name *</label>
@@ -1201,7 +754,6 @@ const Admin: React.FC = () => {
                         type="text"
                         value={skillFormData.category}
                         onChange={(e) => setSkillFormData({...skillFormData, category: e.target.value})}
-                        placeholder="e.g., Mental Health, Clinical Skills"
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       />
@@ -1222,12 +774,10 @@ const Admin: React.FC = () => {
                         type="text"
                         value={skillFormData.provider}
                         onChange={(e) => setSkillFormData({...skillFormData, provider: e.target.value})}
-                        placeholder="e.g., NHS, Skills for Care"
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                       />
                     </div>
                   </div>
-                  
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                     <textarea
@@ -1235,145 +785,51 @@ const Admin: React.FC = () => {
                       onChange={(e) => setSkillFormData({...skillFormData, description: e.target.value})}
                       rows={3}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="Describe what this skill covers..."
                     />
                   </div>
-                  
-                  <div className="flex items-center space-x-6">
+                  <div className="flex items-center space-x-4">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         id="earns_premium"
-                        checked={skillFormData.earnsPremium}
-                        onChange={(e) => setSkillFormData({...skillFormData, earnsPremium: e.target.checked})}
+                        checked={skillFormData.earns_premium}
+                        onChange={(e) => setSkillFormData({...skillFormData, earns_premium: e.target.checked})}
                         className="mr-2"
                       />
                       <label htmlFor="earns_premium" className="text-sm font-medium text-gray-700">
                         Earns Premium
                       </label>
                     </div>
-                    
-                    {skillFormData.earnsPremium && (
-                      <div className="flex-1">
+                    {skillFormData.earns_premium && (
+                      <div>
                         <input
                           type="text"
-                          value={skillFormData.premiumRate}
-                          onChange={(e) => setSkillFormData({...skillFormData, premiumRate: e.target.value})}
-                          placeholder="e.g., +£3.50/hour"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                          value={skillFormData.premium_rate}
+                          onChange={(e) => setSkillFormData({...skillFormData, premium_rate: e.target.value})}
+                          placeholder="e.g., +£2.50/hour"
+                          className="px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         />
                       </div>
                     )}
                   </div>
-                  
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       id="skill_is_active"
-                      checked={skillFormData.isActive}
-                      onChange={(e) => setSkillFormData({...skillFormData, isActive: e.target.checked})}
+                      checked={skillFormData.is_active}
+                      onChange={(e) => setSkillFormData({...skillFormData, is_active: e.target.checked})}
                       className="mr-2"
                     />
                     <label htmlFor="skill_is_active" className="text-sm font-medium text-gray-700">
                       Skill is active
                     </label>
                   </div>
-                  
-                  <div className="flex gap-4">
-                    <Button type="submit" variant="primary" size="md" disabled={isLoading}>
-                      {isLoading ? 'Saving...' : (editingSkill ? 'Update Skill' : 'Create Skill')}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={resetSkillForm}
-                      variant="outline"
-                      size="md"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {/* Skills List */}
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-primary-900">All Skills ({skills.length})</h2>
-              </div>
-              
-              {isLoading ? (
-                <div className="p-6 text-center">Loading skills...</div>
-              ) : skills.length === 0 ? (
-                <div className="p-6 text-center text-gray-500">No skills found</div>
-              ) : (
-                <div className="divide-y divide-gray-200">
-                  {skills.map(skill => (
-                    <div key={skill.id} className="p-6">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold text-primary-900">{skill.name}</h3>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              skill.isActive ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {skill.isActive ? 'Active' : 'Inactive'}
-                            </span>
-                            <span className="bg-primary-100 text-primary-700 px-2 py-1 rounded-full text-xs font-medium">
-                              {skill.category}
-                            </span>
-                            {skill.earnsPremium && (
-                              <span className="bg-success-100 text-success-700 px-2 py-1 rounded-full text-xs font-medium">
-                                Premium: {skill.premiumRate}
-                              </span>
-                            )}
-                          </div>
-                          {skill.description && (
-                            <p className="text-gray-700 text-sm mb-2">{skill.description}</p>
-                          )}
-                          <div className="text-gray-600 mb-2">
-                            {skill.duration && <span className="mr-4">⏱️ {skill.duration}</span>}
-                            {skill.provider && <span>🏢 {skill.provider}</span>}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Created: {new Date(skill.createdAt).toLocaleDateString()}
-                          </div>
-                        </div>
-                        <div className="flex gap-2 ml-4">
-                          <button
-                            onClick={() => handleEditSkill(skill)}
-                            className="p-2 text-gray-600 hover:text-primary-600"
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteSkill(skill.id)}
-                            className="p-2 text-gray-600 hover:text-error-600"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                </>
               )}
-            </div>
-          </>
-        )}
 
-        {/* Career Paths Tab */}
-        {activeTab === 'paths' && (
-          <>
-            {/* Career Path Form */}
-            {showPathForm && (
-              <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-                <h2 className="text-xl font-semibold text-primary-900 mb-4">
-                  {editingPath ? 'Edit Career Path' : 'Add New Career Path'}
-                </h2>
-                <form onSubmit={handlePathSubmit} className="space-y-4">
+              {/* Career Path Form */}
+              {activeTab === 'paths' && (
+                <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Path Title *</label>
@@ -1389,8 +845,8 @@ const Admin: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Time to Complete *</label>
                       <input
                         type="text"
-                        value={pathFormData.timeToComplete}
-                        onChange={(e) => setPathFormData({...pathFormData, timeToComplete: e.target.value})}
+                        value={pathFormData.time_to_complete}
+                        onChange={(e) => setPathFormData({...pathFormData, time_to_complete: e.target.value})}
                         placeholder="e.g., 3-6 months"
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
@@ -1400,8 +856,8 @@ const Admin: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Current Role *</label>
                       <input
                         type="text"
-                        value={pathFormData.currentRole}
-                        onChange={(e) => setPathFormData({...pathFormData, currentRole: e.target.value})}
+                        value={pathFormData.current_role}
+                        onChange={(e) => setPathFormData({...pathFormData, current_role: e.target.value})}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       />
@@ -1410,8 +866,8 @@ const Admin: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Target Role *</label>
                       <input
                         type="text"
-                        value={pathFormData.targetRole}
-                        onChange={(e) => setPathFormData({...pathFormData, targetRole: e.target.value})}
+                        value={pathFormData.target_role}
+                        onChange={(e) => setPathFormData({...pathFormData, target_role: e.target.value})}
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       />
@@ -1420,46 +876,14 @@ const Admin: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Salary Increase *</label>
                       <input
                         type="text"
-                        value={pathFormData.salaryIncrease}
-                        onChange={(e) => setPathFormData({...pathFormData, salaryIncrease: e.target.value})}
+                        value={pathFormData.salary_increase}
+                        onChange={(e) => setPathFormData({...pathFormData, salary_increase: e.target.value})}
                         placeholder="e.g., +£4,000 - £6,000 annually"
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                         required
                       />
                     </div>
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Required Skills</label>
-                    <div className="flex gap-2 mb-2">
-                      <input
-                        type="text"
-                        value={skillInput}
-                        onChange={(e) => setSkillInput(e.target.value)}
-                        placeholder="Add a required skill..."
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                      />
-                      <Button type="button" onClick={addSkill} variant="outline" size="md">
-                        Add
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {pathFormData.requiredSkills.map((skill, index) => (
-                        <span key={index} className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm flex items-center">
-                          {skill}
-                          <button
-                            type="button"
-                            onClick={() => removeSkill(index)}
-                            className="ml-2 text-primary-500 hover:text-primary-700"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                     <textarea
@@ -1467,112 +891,144 @@ const Admin: React.FC = () => {
                       onChange={(e) => setPathFormData({...pathFormData, description: e.target.value})}
                       rows={3}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="Describe this career advancement path..."
                     />
                   </div>
-                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Required Skills (one per line)</label>
+                    <textarea
+                      value={pathFormData.required_skills.join('\n')}
+                      onChange={(e) => setPathFormData({...pathFormData, required_skills: e.target.value.split('\n')})}
+                      rows={4}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                      placeholder="Leadership Training&#10;Medication Administration&#10;Safeguarding Level 2"
+                    />
+                  </div>
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       id="path_is_active"
-                      checked={pathFormData.isActive}
-                      onChange={(e) => setPathFormData({...pathFormData, isActive: e.target.checked})}
+                      checked={pathFormData.is_active}
+                      onChange={(e) => setPathFormData({...pathFormData, is_active: e.target.checked})}
                       className="mr-2"
                     />
                     <label htmlFor="path_is_active" className="text-sm font-medium text-gray-700">
                       Career path is active
                     </label>
                   </div>
-                  
-                  <div className="flex gap-4">
-                    <Button type="submit" variant="primary" size="md" disabled={isLoading}>
-                      {isLoading ? 'Saving...' : (editingPath ? 'Update Career Path' : 'Create Career Path')}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={resetPathForm}
-                      variant="outline"
-                      size="md"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            )}
+                </>
+              )}
 
-            {/* Career Paths List */}
-            <div className="bg-white rounded-lg shadow-md">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-primary-900">All Career Paths ({careerPaths.length})</h2>
+              <div className="flex gap-4">
+                <Button type="submit" variant="primary" size="md" disabled={isLoading}>
+                  {isLoading ? 'Saving...' : (editingItem ? 'Update' : 'Create')}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={resetForm}
+                  variant="outline"
+                  size="md"
+                >
+                  Cancel
+                </Button>
               </div>
-              
-              {isLoading ? (
-                <div className="p-6 text-center">Loading career paths...</div>
-              ) : careerPaths.length === 0 ? (
-                <div className="p-6 text-center text-gray-500">No career paths found</div>
-              ) : (
-                <div className="divide-y divide-gray-200">
-                  {careerPaths.map(path => (
-                    <div key={path.id} className="p-6">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold text-primary-900">{path.title}</h3>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              path.isActive ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {path.isActive ? 'Active' : 'Inactive'}
-                            </span>
-                            <span className="bg-success-100 text-success-700 px-2 py-1 rounded-full text-xs font-medium">
-                              {path.salaryIncrease}
-                            </span>
-                          </div>
-                          <div className="text-gray-600 mb-2">
-                            <span className="mr-4">📈 {path.currentRole} → {path.targetRole}</span>
-                            <span>⏱️ {path.timeToComplete}</span>
-                          </div>
-                          {path.description && (
-                            <p className="text-gray-700 text-sm mb-2">{path.description}</p>
-                          )}
-                          {path.requiredSkills && path.requiredSkills.length > 0 && (
-                            <div className="mb-2">
-                              <span className="text-sm text-gray-500">Required Skills: </span>
-                              {path.requiredSkills.map((skill, index) => (
-                                <span key={index} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs mr-1">
-                                  {skill}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          <div className="text-xs text-gray-500">
-                            Created: {new Date(path.createdAt).toLocaleDateString()}
-                          </div>
-                        </div>
-                        <div className="flex gap-2 ml-4">
-                          <button
-                            onClick={() => handleEditPath(path)}
-                            className="p-2 text-gray-600 hover:text-primary-600"
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeletePath(path.id)}
-                            className="p-2 text-gray-600 hover:text-error-600"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+            </form>
+          </div>
+        )}
+
+        {/* Data List */}
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-primary-900">
+              All {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} ({getCurrentData().length})
+            </h2>
+          </div>
+          
+          {isLoading ? (
+            <div className="p-6 text-center">Loading...</div>
+          ) : getCurrentData().length === 0 ? (
+            <div className="p-6 text-center text-gray-500">No {activeTab} found</div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {getCurrentData().map((item: any) => (
+                <div key={item.id} className="p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-semibold text-primary-900">
+                          {item.title || item.name}
+                        </h3>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          item.is_active ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {item.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                        {activeTab === 'jobs' && (
+                          <span className="bg-primary-100 text-primary-700 px-2 py-1 rounded-full text-xs font-medium">
+                            {item.contract_type}
+                          </span>
+                        )}
+                        {activeTab === 'shifts' && (
+                          <span className="bg-primary-100 text-primary-700 px-2 py-1 rounded-full text-xs font-medium">
+                            £{item.hourly_rate}/hour
+                          </span>
+                        )}
+                        {activeTab === 'skills' && item.earns_premium && (
+                          <span className="bg-success-100 text-success-700 px-2 py-1 rounded-full text-xs font-medium">
+                            Premium: {item.premium_rate}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-gray-600 mb-2 text-sm">
+                        {activeTab === 'jobs' && (
+                          <>📍 {item.location} • 💰 {item.salary} • 👤 {item.role}</>
+                        )}
+                        {activeTab === 'shifts' && (
+                          <>📍 {item.location} • 🏢 {item.facility_name} • ⚡ {item.urgency} priority</>
+                        )}
+                        {activeTab === 'skills' && (
+                          <>📚 {item.category} • ⏱️ {item.duration} • 🏢 {item.provider}</>
+                        )}
+                        {activeTab === 'paths' && (
+                          <>👤 {item.current_role} → {item.target_role} • 💰 {item.salary_increase}</>
+                        )}
+                      </div>
+                      <p className="text-gray-700 text-sm mb-2">
+                        {(item.description || '').substring(0, 150)}
+                        {(item.description || '').length > 150 ? '...' : ''}
+                      </p>
+                      <div className="text-xs text-gray-500">
+                        Created: {new Date(item.created_at || item.posted_date).toLocaleDateString()}
                       </div>
                     </div>
-                  ))}
+                    <div className="flex gap-2 ml-4">
+                      <button
+                        onClick={() => toggleStatus(item, getCurrentTable())}
+                        className="p-2 text-gray-600 hover:text-primary-600"
+                        title={item.is_active ? 'Deactivate' : 'Activate'}
+                      >
+                        {item.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                      <button
+                        onClick={() => handleEdit(item)}
+                        className="p-2 text-gray-600 hover:text-primary-600"
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id, getCurrentTable())}
+                        className="p-2 text-gray-600 hover:text-error-600"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
