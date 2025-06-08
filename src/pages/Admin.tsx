@@ -166,15 +166,15 @@ const Admin: React.FC = () => {
     }
   };
 
-  // Simple, direct button click handler
-  const handleAddNewButtonClick = () => {
-    console.log('Button clicked! Active tab:', activeTab);
-    setShowForm(true);
+  // Fixed button click handler
+  const handleAddNewClick = () => {
+    console.log('Add New button clicked for tab:', activeTab);
     setEditingItem(null);
     resetForm();
     setSubmitMessage(null);
+    setShowForm(true);
 
-    // Scroll to form after it renders
+    // Scroll to form after state update
     setTimeout(() => {
       const formElement = document.getElementById('add-edit-form');
       if (formElement) {
@@ -539,10 +539,9 @@ const Admin: React.FC = () => {
             <div className="flex gap-4">
               <button
                 type="button"
-                onClick={handleAddNewButtonClick}
+                onClick={handleAddNewClick}
                 disabled={isLoading}
-                className="inline-flex items-center justify-center px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ minWidth: '140px' }}
+                className="inline-flex items-center justify-center px-4 py-2 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-300 text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add New {getTabLabel()}
@@ -593,6 +592,11 @@ const Admin: React.FC = () => {
               {tab.label} ({tab.count})
             </button>
           ))}
+        </div>
+
+        {/* Debug Info */}
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm">
+          <strong>Debug:</strong> Active Tab: {activeTab} | Show Form: {showForm ? 'Yes' : 'No'} | Editing: {editingItem ? 'Yes' : 'No'}
         </div>
 
         {/* Forms */}
