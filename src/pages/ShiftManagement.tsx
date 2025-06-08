@@ -2,22 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../components/layout/Layout';
 import { MapPin, Clock, Award, Filter } from 'lucide-react';
 import Button from '../components/ui/Button';
-
-interface Shift {
-  id: string;
-  title: string;
-  location: string;
-  distance: string;
-  startTime: string;
-  endTime: string;
-  hourlyRate: string;
-  requirements: string[];
-  urgency: 'low' | 'medium' | 'high';
-  sector: string;
-}
+import { getShifts, type Shift } from '../lib/shifts';
 
 const ShiftManagement: React.FC = () => {
   const [shifts, setShifts] = useState<Shift[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     location: '',
     distance: '',
@@ -25,60 +15,34 @@ const ShiftManagement: React.FC = () => {
     urgency: ''
   });
 
-  // Mock data for demonstration
   useEffect(() => {
-    const mockShifts: Shift[] = [
-      {
-        id: '1',
-        title: 'Mental Health Nurse - Night Shift',
-        location: 'Central London Hospital',
-        distance: '2.3 miles',
-        startTime: '20:00',
-        endTime: '08:00',
-        hourlyRate: '£28.50',
-        requirements: ['RGN Registration', 'Mental Health Experience'],
-        urgency: 'high',
-        sector: 'mental-health'
-      },
-      {
-        id: '2',
-        title: 'Learning Disability Support Worker',
-        location: 'Supported Living Service, North London',
-        distance: '4.1 miles',
-        startTime: '14:00',
-        endTime: '22:00',
-        hourlyRate: '£22.00',
-        requirements: ['Learning Disability Training', 'DBS Check'],
-        urgency: 'medium',
-        sector: 'learning-disabilities'
-      },
-      {
-        id: '3',
-        title: 'Dementia Care Specialist',
-        location: 'Specialist Care Home, East London',
-        distance: '6.8 miles',
-        startTime: '07:00',
-        endTime: '19:00',
-        hourlyRate: '£25.75',
-        requirements: ['Dementia Care Training', 'NVQ Level 3'],
-        urgency: 'low',
-        sector: 'dementia'
-      },
-      {
-        id: '4',
-        title: 'Healthcare Assistant - Emergency Cover',
-        location: 'Private Hospital, West London',
-        distance: '3.2 miles',
-        startTime: '06:00',
-        endTime: '18:00',
-        hourlyRate: '£20.50',
-        requirements: ['Healthcare Assistant Qualification', 'Flexible'],
-        urgency: 'high',
-        sector: 'healthcare'
-      }
-    ];
-    setShifts(mockShifts);
+    loadShifts();
   }, []);
+
+  const loadShifts = async (searchFilters?: any) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await getShifts(searchFilters);
+      setShifts(data);
+    } catch (err) {
+      setError('Failed to load shifts. Please try again later.');
+      console.error('Error loading shifts:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFilterChange = (newFilters: typeof filters) => {
+    setFilters(newFilters);
+    const searchFilters: any = {};
+    
+    if (newFilters.sector) searchFilters.sector = newFilters.sector;
+    if (newFilters.urgency) searchFilters.urgency = newFilters.urgency;
+    if (newFilters.location) searchFilters.location = newFilters.location;
+    
+    loadShifts(searchFilters);
+  };
 
   const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
@@ -89,11 +53,28 @@ const ShiftManagement: React.FC = () => {
     }
   };
 
-  const filteredShifts = shifts.filter(shift => {
-    if (filters.sector && shift.sector !== filters.sector) return false;
-    if (filters.urgency && shift.urgency !== filters.urgency) return false;
-    return true;
-  });
+  const formatTime = (timeString: string) => {
+    const date = new Date(timeString);
+    return date.toLocaleTimeString('en-GB', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
+  };
+
+  const formatDate = (timeString: string) => {
+    const date = new Date(timeString);
+    return date.toLocaleDateString('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short'
+    });
+  };
+
+  const calculateDistance = () => {
+    // Mock distance calculation - in real app would use geolocation
+    return `${(Math.random() * 10 + 1).toFixed(1)} miles`;
+  };
 
   return (
     <Layout pageTitle="Available Shifts Near You">
@@ -130,7 +111,7 @@ const ShiftManagement: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Sector</label>
                   <select 
                     value={filters.sector}
-                    onChange={(e) => setFilters({...filters, sector: e.target.value})}
+                    onChange={(e) => handleFilterChange({...filters, sector: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                   >
                     <option value="">All Sectors</option>
@@ -138,26 +119,26 @@ const ShiftManagement: React.FC = () => {
                     <option value="learning-disabilities">Learning Disabilities</option>
                     <option value="dementia">Specialist Dementia</option>
                     <option value="healthcare">General Healthcare</option>
+                    <option value="security">Security</option>
+                    <option value="cleaning">Cleaning</option>
+                    <option value="admin">Administrative</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Distance</label>
-                  <select 
-                    value={filters.distance}
-                    onChange={(e) => setFilters({...filters, distance: e.target.value})}
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                  <input
+                    type="text"
+                    placeholder="Enter location..."
+                    value={filters.location}
+                    onChange={(e) => handleFilterChange({...filters, location: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                  >
-                    <option value="">Any Distance</option>
-                    <option value="5">Within 5 miles</option>
-                    <option value="10">Within 10 miles</option>
-                    <option value="25">Within 25 miles</option>
-                  </select>
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Urgency</label>
                   <select 
                     value={filters.urgency}
-                    onChange={(e) => setFilters({...filters, urgency: e.target.value})}
+                    onChange={(e) => handleFilterChange({...filters, urgency: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                   >
                     <option value="">All Urgency Levels</option>
@@ -168,7 +149,7 @@ const ShiftManagement: React.FC = () => {
                 </div>
                 <div className="flex items-end">
                   <Button 
-                    onClick={() => setFilters({location: '', distance: '', sector: '', urgency: ''})}
+                    onClick={() => handleFilterChange({location: '', distance: '', sector: '', urgency: ''})}
                     variant="outline" 
                     size="md"
                     fullWidth
@@ -181,51 +162,77 @@ const ShiftManagement: React.FC = () => {
 
             {/* Available Shifts */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-primary-900">Available Shifts ({filteredShifts.length})</h2>
+              <h2 className="text-2xl font-bold text-primary-900">
+                Available Shifts ({isLoading ? '...' : shifts.length})
+              </h2>
               
-              {filteredShifts.map(shift => (
-                <div key={shift.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-primary-900 mb-2">{shift.title}</h3>
-                      <div className="flex items-center text-gray-600 mb-2">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        <span>{shift.location} • {shift.distance} away</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Clock className="w-4 h-4 mr-2" />
-                        <span>{shift.startTime} - {shift.endTime}</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-primary-900 mb-2">{shift.hourlyRate}/hour</div>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getUrgencyColor(shift.urgency)}`}>
-                        {shift.urgency.charAt(0).toUpperCase() + shift.urgency.slice(1)} Priority
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <h4 className="font-medium text-gray-900 mb-2">Requirements:</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {shift.requirements.map((req, index) => (
-                        <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-                          {req}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <Button variant="outline" size="sm">
-                      View Details
-                    </Button>
-                    <Button variant="primary" size="sm">
-                      Book This Shift
-                    </Button>
-                  </div>
+              {error && (
+                <div className="p-4 bg-error-100 text-error-800 rounded-md">
+                  {error}
                 </div>
-              ))}
+              )}
+              
+              {isLoading ? (
+                <div className="text-center py-8 text-gray-600">Loading shifts...</div>
+              ) : shifts.length === 0 ? (
+                <div className="text-center py-8 text-gray-600">
+                  No shifts found matching your criteria.
+                </div>
+              ) : (
+                shifts.map(shift => (
+                  <div key={shift.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-xl font-semibold text-primary-900 mb-2">{shift.title}</h3>
+                        <div className="flex items-center text-gray-600 mb-2">
+                          <MapPin className="w-4 h-4 mr-2" />
+                          <span>{shift.facilityName}, {shift.location} • {calculateDistance()} away</span>
+                        </div>
+                        <div className="flex items-center text-gray-600">
+                          <Clock className="w-4 h-4 mr-2" />
+                          <span>
+                            {formatDate(shift.startTime)} • {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-primary-900 mb-2">£{shift.hourlyRate}/hour</div>
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getUrgencyColor(shift.urgency)}`}>
+                          {shift.urgency.charAt(0).toUpperCase() + shift.urgency.slice(1)} Priority
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {shift.description && (
+                      <div className="mb-4">
+                        <p className="text-gray-700">{shift.description}</p>
+                      </div>
+                    )}
+                    
+                    {shift.requirements && shift.requirements.length > 0 && (
+                      <div className="mb-4">
+                        <h4 className="font-medium text-gray-900 mb-2">Requirements:</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {shift.requirements.map((req, index) => (
+                            <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                              {req}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="flex justify-between items-center">
+                      <Button variant="outline" size="sm">
+                        View Details
+                      </Button>
+                      <Button variant="primary" size="sm">
+                        Book This Shift
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Call to Action */}
