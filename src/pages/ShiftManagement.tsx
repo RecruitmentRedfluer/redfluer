@@ -226,8 +226,8 @@ const ShiftManagement: React.FC = () => {
                       <Button variant="outline" size="sm">
                         View Details
                       </Button>
-                      <Button variant="primary" size="sm">
-                        Book This Shift
+                      <Button to={`/apply-shift/${shift.id}`} variant="primary" size="sm">
+                        Apply for This Shift
                       </Button>
                     </div>
                   </div>

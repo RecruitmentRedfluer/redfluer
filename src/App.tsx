@@ -9,6 +9,9 @@ import Contact from './pages/Contact';
 import JobDetail from './pages/JobDetail';
 import Register from './pages/Register';
 import ApplyJob from './pages/ApplyJob';
+import ApplyShift from './pages/ApplyShift';
+import ApplySkill from './pages/ApplySkill';
+import ApplyCareerPath from './pages/ApplyCareerPath';
 import Admin from './pages/Admin';
 import ShiftManagement from './pages/ShiftManagement';
 import SkillsTracking from './pages/SkillsTracking';
@@ -26,6 +29,9 @@ function App() {
         <Route path="/job/:id" element={<JobDetail />} />
         <Route path="/register" element={<Register />} />
         <Route path="/apply/:id" element={<ApplyJob />} />
+        <Route path="/apply-shift/:id" element={<ApplyShift />} />
+        <Route path="/apply-skill/:id" element={<ApplySkill />} />
+        <Route path="/apply-career-path/:id" element={<ApplyCareerPath />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/shifts" element={<ShiftManagement />} />
         <Route path="/skills" element={<SkillsTracking />} />

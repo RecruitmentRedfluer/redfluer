@@ -327,11 +327,11 @@ const SkillsTracking: React.FC = () => {
                         <div className="flex justify-between items-center">
                           {status === 'available' && (
                             <Button 
-                              onClick={() => handleStartTraining(skill)}
+                              to={`/apply-skill/${skill.id}`}
                               variant="primary" 
                               size="sm"
                             >
-                              Start Training
+                              Apply for Training
                             </Button>
                           )}
                           {status === 'in-progress' && userSkillData && (
@@ -421,8 +421,8 @@ const SkillsTracking: React.FC = () => {
                           </div>
                           <div className="text-center">
                             <p className="text-sm text-gray-500 mb-3">Time to complete: {path.timeToComplete}</p>
-                            <Button variant="primary" size="sm" fullWidth>
-                              Start This Path
+                            <Button to={`/apply-career-path/${path.id}`} variant="primary" size="sm" fullWidth>
+                              Apply for This Path
                             </Button>
                           </div>
                         </div>
