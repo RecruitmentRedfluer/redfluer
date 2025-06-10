@@ -306,6 +306,130 @@ const Legal: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Section 2 - General Obligations, Information and Introductions */}
+                <div>
+                  <h3 className="text-xl font-semibold text-primary-900 mb-4">Section 2 - General Obligations, Information and Introductions</h3>
+                  <div className="space-y-4">
+                    <div className="border-l-4 border-primary-500 pl-4">
+                      <p className="text-gray-700">
+                        <strong>2.0</strong> We agree to use our reasonable endeavours to provide the Services. For the Conduct Regulations where your Requirement is only for the Temp Supply of a Candidate we shall be acting as a Supplier but for all other Requirements we operate as an Introducer.
+                      </p>
+                    </div>
+
+                    <div className="border-l-4 border-primary-500 pl-4">
+                      <p className="text-gray-700 mb-4">
+                        <strong>2.1</strong> You agree to accept our Services and you acknowledge and agree
+                      </p>
+                      <div className="ml-4 space-y-4">
+                        <div>
+                          <p className="text-gray-700 mb-2">
+                            <strong>(a)</strong> the Conduct Regulations and other statutory obligations require us to provide specific information to each Candidate and to other authorities in relation to any Requirement; accordingly to enable us to comply with our obligations and to help us introduce a suitable candidate you must
+                          </p>
+                          <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
+                            <li>(i) upon issuing a Requirement or as soon as possible thereafter provide the information set out in the Schedule together with answers to any additional questions we may raise, and</li>
+                            <li>(ii) prior to an Engagement promptly inform us of any additional information or any change to information already provided</li>
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <p className="text-gray-700 mb-2">
+                            <strong>(b)</strong> to achieve a satisfactory outcome, to check that the Candidate is suitable for your purposes and that you are satisfied with the information and confirmations we have provided to you, regardless of our statutory obligations, and you agree in particular
+                          </p>
+                          <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
+                            <li>(i) regardless of any references or information that we may provide, to take up your own references for the Candidate and verify the experience, training and qualifications of the Candidate or other information supplied</li>
+                            <li>(ii) to ensure that the Candidate has any necessary permit or authority to work for you and comply with asylum and immigration requirements relevant to an employer</li>
+                            <li>(iii) to explain your requirements to the Candidate promptly on commencement of the Engagement if you have not already done so</li>
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <p className="text-gray-700">
+                            <strong>(c)</strong> where you need authorisation or a licence to be able to engage a Candidate or allow the Candidate to work in the position you seek to fill, your request for us to seek a Candidate shall be deemed to be your confirmation that you have all necessary authorisations and licences unless you inform us otherwise, for example where you are in the process of applying for the required authorisation
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-gray-700">
+                            <strong>(d)</strong> to ensure that all information you provide to us is full and accurate
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-gray-700">
+                            <strong>(e)</strong> to keep us promptly informed of your intentions in relation to an Engagement of a Candidate throughout the Fee Period.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-l-4 border-primary-500 pl-4">
+                      <p className="text-gray-700">
+                        <strong>2.2</strong> We may Introduce Candidates to you regardless of any specific Requirement and for the avoidance of doubt you may Engage the Candidate for any purpose, job or role regardless of any stated initial intention. In the event that you have not already provided us with information in accordance with this Section 2, you agree to provide us with that information promptly.
+                      </p>
+                    </div>
+
+                    <div className="border-l-4 border-primary-500 pl-4">
+                      <p className="text-gray-700">
+                        <strong>2.3</strong> Transparency is important to avoid duplication of effort. Accordingly, you agree to tell us promptly if you are using any Social Media, using a third party to fill positions or you are actively considering an individual introduced from another source or already known to you, for filling a Requirement. In all cases it is your sole responsibility for checking whether a Candidate has been previously introduced by another party and for keeping us informed.
+                      </p>
+                    </div>
+
+                    <div className="border-l-4 border-primary-500 pl-4">
+                      <p className="text-gray-700">
+                        <strong>2.4</strong> If you are already, at the time we first Introduce a Candidate to you, actively considering the Candidate for Engagement such that you believe that we have no entitlement to a Fee, it is important that you notify us in writing within the notification period specified in the CSA, or, if no period is specified, within 3 working days of the earliest date upon which you are able to identify the Candidate from the information we have provided, together with clear supporting evidence of your active consideration.
+                      </p>
+                    </div>
+
+                    <div className="border-l-4 border-primary-500 pl-4">
+                      <p className="text-gray-700">
+                        <strong>2.5</strong> Wherever there is an Assignment we shall endeavour to advise you of the details as soon as possible unless, in the case of a Perm Placement, you have concluded negotiations with the Candidate direct. For the avoidance of doubt, whilst we may advise you of the details applicable to the placement of a Candidate, those details are relevant only to record rates agreed for the purposes of our Fee and your use of the Candidate but not further or otherwise.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 3 - Remuneration */}
+                <div>
+                  <h3 className="text-xl font-semibold text-primary-900 mb-4">Section 3 – Remuneration</h3>
+                  <div className="space-y-4">
+                    <div className="border-l-4 border-primary-500 pl-4">
+                      <p className="text-gray-700 mb-4">
+                        <strong>3.0</strong> Remuneration referred to in the Fee Scales, for the purposes of our Fee, is calculated as follows:
+                      </p>
+                      <div className="ml-4 space-y-4">
+                        <div>
+                          <p className="text-gray-700">
+                            <strong>(a)</strong> subject to clause 3.0(b), the total proposed or projected sum (whichever is higher), payable by you or an End User for the benefit of the services of a Candidate under an Engagement for one calendar year from the earlier of the proposed or actual commencement of the service, together with the value attributable by HM Revenue & Customs, or for the avoidance of doubt, would be attributed by HM Revenue & Customs were the benefit subject to tax in the UK, of all taxable benefits provided under the Engagement, such value in respect of any motor vehicle being not less than £7,500
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-gray-700">
+                            <strong>(b)</strong> calculation is on an annualised basis, so that the same payment rate or charge applicable during the period of an Engagement which is projected to be for less than a full calendar year shall be deemed to apply as if the Engagement were to continue for a full year, whether or not the Engagement continues for a full year.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-l-4 border-primary-500 pl-4">
+                      <p className="text-gray-700 mb-4">
+                        <strong>3.1</strong> Wherever there is an Engagement, not being a Temp Supply, for which, regardless of the circumstances, we believe (whether reasonably or otherwise) we are due a Fee, you shall within 7 days of our written request provide to us information to enable us to identify the Remuneration and other material terms of an Engagement as we may request. If you do not inform us of the relevant Remuneration within 7 days of our enquiry, or by any later date we raise an invoice, the Remuneration shall be deemed to be an amount calculated on the basis of the higher of
+                      </p>
+                      <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
+                        <li>(a) the rate payable by you under the last previous Assignment, or</li>
+                        <li>(b) the highest amount or rate indicated by either you or us as payable for the services sought by you, or</li>
+                        <li>(c) the highest amount achievable in the market place for a person of similar experience to work in the position that has been filled - such amount shall be determined by us based upon appropriate evidence.</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-primary-500 pl-4">
+                      <p className="text-gray-700">
+                        <strong>3.2</strong> For the avoidance of doubt in the case of an Offer that is withdrawn, Remuneration shall be calculated on the projected sum and/or value contained within the Offer.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Definitions Section */}
                 <div>
                   <h3 className="text-xl font-semibold text-primary-900 mb-4">Definitions</h3>
