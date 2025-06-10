@@ -242,32 +242,36 @@ const Legal: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Fee Scales */}
+                {/* Fee Scales - Updated Section */}
                 <div>
                   <h3 className="text-xl font-semibold text-primary-900 mb-4">Fee Scales</h3>
                   <div className="bg-gray-50 p-6 rounded-lg">
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       <div>
                         <h4 className="font-semibold text-primary-900 mb-2">1 – Fee Scale for Perm Placements and Engagements except where otherwise specified</h4>
                         <p className="text-gray-700">Our fee, being a percentage of that total remuneration is <strong>30%</strong></p>
                       </div>
+                      
                       <div>
                         <h4 className="font-semibold text-primary-900 mb-2">2 – Fees for a Temp Placement (where you hire and pay the Candidate)</h4>
                         <p className="text-gray-700"><strong>30%</strong> of the sum that you pay to the Candidate for the period of hire as specified by us for each hire.</p>
                       </div>
+                      
                       <div>
                         <h4 className="font-semibold text-primary-900 mb-2">3 – Fees for Temp Supply</h4>
                         <p className="text-gray-700">Where we supply the Candidate, our Fee is calculated on time spent at the rate specified and agreed by us for the Assignment from time to time. Our Fee is based upon the total of the cost to us of engaging and supplying the Candidate whether calculated with reference to a Candidate or all or part of our business (including statutory payments we make to or relating to the Candidate) ('Total Cost') plus our charge ('Charge') which, unless otherwise agreed in writing, shall be calculated as a percentage of Total Cost. Note: Fees may increase if costs increase.</p>
                       </div>
+                      
                       <div>
                         <h4 className="font-semibold text-primary-900 mb-2">4 – Transfer Fee for Engagements following our supply of the Candidate</h4>
-                        <p className="text-gray-700">The higher of <strong>25%</strong> of Remuneration, or a fee charged under Fees 1, chargeable if there is an Engagement within the relevant Transfer Period of a Candidate we have supplied.</p>
+                        <p className="text-gray-700 mb-2">The higher of <strong>25%</strong> of Remuneration, or a fee charged under Fees 1, chargeable if there is an Engagement within the relevant Transfer Period of a Candidate we have supplied.</p>
+                        <p className="text-gray-700">In certain circumstances instead of paying us a Transfer Fee you may have an option to take the supply of the Candidate through us. Please see Section 8 of the Main Client Terms. A Fee based on Fees 1 is payable in the case of an Engagement of a Candidate we have Introduced, but not actually supplied, for any purpose.</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Refund Scale */}
+                {/* Refund Scale - Updated Section */}
                 <div>
                   <h3 className="text-xl font-semibold text-primary-900 mb-4">Refund Scale</h3>
                   <div className="bg-gray-50 p-6 rounded-lg">
@@ -298,6 +302,276 @@ const Legal: React.FC = () => {
                           </tr>
                         </tbody>
                       </table>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Definitions Section */}
+                <div>
+                  <h3 className="text-xl font-semibold text-primary-900 mb-4">Definitions</h3>
+                  <div className="bg-gray-50 p-6 rounded-lg">
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Additional Service</h4>
+                        <p className="text-gray-700">An additional specific service, which may be ancillary to or as part of the Services or which may relate to other business, which we provide to you following your request.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Agency Worker</h4>
+                        <p className="text-gray-700">An agency worker as defined above at R.3 of the AWR.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Assignment an Engagement</h4>
+                        <p className="text-gray-700">In respect of which details have been negotiated and agreed through us or in respect of which you have kept us informed in advance of commencement, being either a Perm Placement, a Temp Placement or a Temp Supply, and references to Assignment shall include the period of a Temp Placement or Temp Supply.</p>
+                        <p className="text-gray-700 mt-2"><strong>NOTE:</strong> an Engagement which you do not agree with us in advance is not an Assignment.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">AWR</h4>
+                        <p className="text-gray-700">The Agency Workers Regulations 2010 and any related regulations.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Candidate</h4>
+                        <p className="text-gray-700">Any person, whether presenting as an individual, a contractor, an interim manager, whether self-employed or otherwise, and/or a limited company through which a person is offering services, or a supplier company, in respect of whom or which, or in respect of whose skills or services, information is provided to you by us.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Cessation Event</h4>
+                        <p className="text-gray-700">An event of insolvency within the meaning of the Insolvency Act 1986, the appointment of a receiver or an administrator, notice of intention to appoint an administrator, the making of a winding up order, entering or proposing to enter into a Company Voluntary Arrangement or similar arrangement or composition with creditors, the passing of a resolution to cease trading or actual cessation of trading.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Charge</h4>
+                        <p className="text-gray-700">The amount defined as 'Charge' in the CSA at Fees 3.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">CIS</h4>
+                        <p className="text-gray-700">Her Majesty's Revenue and Customs ('HMRC') Construction Industry Scheme.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Comparator Terms</h4>
+                        <p className="text-gray-700">The pay and basic working and employment conditions as set out in R.6 of the AWR that are ordinarily in force within your business, and which would have been applicable had the Candidate been engaged directly by you to do the same job on the first day of the Temp Supply.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Conduct Regulations</h4>
+                        <p className="text-gray-700">The Conduct of Employment Agencies and Employment Businesses Regulations 2003.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Connected Person</h4>
+                        <p className="text-gray-700 mb-2">A person with whom we conduct business, being (a) a subsidiary company (as defined by s.1159 Companies Act 2006) or associated bodies corporate (as defined by s.256 Companies Act 2006) of yours, or (b) a business (whether corporate or unincorporated)</p>
+                        <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
+                          <li>(i) which is a member of, director of, or partner in, your company or business, or</li>
+                          <li>(ii) of which you are a member, or director or partner, or</li>
+                          <li>(iii) for which either you or a representative of yours is authorised by you (whether expressly or impliedly) to undertake work (other than solely in a professional capacity), or</li>
+                          <li>(iv) which has a director or shareholder in common with you</li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">CSA</h4>
+                        <p className="text-gray-700">The specific document headed 'Client Services Agreement' which we have sent to you and which comprises part of these Terms.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Day 1 Rights</h4>
+                        <p className="text-gray-700">Rights under the AWR which a hirer must apply to an Agency Worker from the first day of an assignment, under R.12 (right to shared facilities) and under R.13 (right to be informed of relevant job opportunities in the same way as directly recruited comparable workers).</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Data Laws</h4>
+                        <p className="text-gray-700">Data protection legislation applicable from time to time in the UK and use herein of 'Personal Data', 'Controller', 'Processor' and 'Data Subject' shall have the respective meanings defined therein.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">End User</h4>
+                        <p className="text-gray-700">Any third party to whom you provide information concerning a Candidate following an Introduction and for whose benefit the Candidate provides any services and any associate (as defined by s.435 Insolvency Act 1986) of that third party.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Engagement</h4>
+                        <p className="text-gray-700">An engagement, arrangement or employment, of any description (including as defined by s.13(1)(a) of the Employment Agencies Act 1973) under an Assignment or otherwise, whether direct or indirect, express or implied, including an Offer, under which a Candidate is due to provide or provides any services for your benefit or for the benefit of, or to, an End User including, but not limited in meaning to, an engagement or employment which is temporary or permanent in nature or through the intermediary of a limited company or by contract through a third party, the date of which shall be deemed to be the earlier of the date of an agreement to Engage or the date of commencement of any services under an Engagement, and 'Engage' and 'Engaged' shall have corresponding meaning.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Expenses</h4>
+                        <p className="text-gray-700">Any expenses you have agreed to pay.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Fees</h4>
+                        <p className="text-gray-700">The payment due for the Services and 'Fee' shall have corresponding meaning.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Fee Period</h4>
+                        <p className="text-gray-700 mb-2">The longer of (a) any time after an Introduction where the Introduction was the effective cause of the Engagement, or (b) the default period of 9 months, or such other default period (if any) specified in the CSA, after any of</p>
+                        <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
+                          <li>(i) an Introduction relating to the Candidate</li>
+                          <li>(ii) the end of negotiations relating to an Introduced Candidate</li>
+                          <li>(iii) the last day of an Assignment of the Candidate</li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Fee Scales</h4>
+                        <p className="text-gray-700">As set out in the CSA and references to Fees are references to the Fees described therein.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Introducer</h4>
+                        <p className="text-gray-700">An employment agency as referred to in the Conduct Regulations.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Introduction</h4>
+                        <p className="text-gray-700">The provision of information by us or by a Candidate, whether such information includes the Candidate's name, that enables you to identify a Candidate or relating to a Candidate already identified, and 'Introduce' and 'Introduced' shall have corresponding meaning.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Invoicing Intervals</h4>
+                        <p className="text-gray-700">The intervals at which we normally invoice in respect of a Temp Placement or Temp Supply as specified in the CSA.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">ITEPA</h4>
+                        <p className="text-gray-700">The Income Tax (Earnings and Pensions) Act 2003.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Offer</h4>
+                        <p className="text-gray-700">An offer to engage the Candidate other than for Temp Placement or Temp Supply communicated either by you or us at your request and which is accepted by the Candidate.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">OPR</h4>
+                        <p className="text-gray-700">The off-payroll tax rules set out in Chapter 10 of Part 2 of ITEPA.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">OPR Exempt</h4>
+                        <p className="text-gray-700">Where the OPR do not apply because you are either a small company or you have no UK connection.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Opt Out Notice</h4>
+                        <p className="text-gray-700">A notice of opt out under R.32(9) of the Conduct Regulations.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Party</h4>
+                        <p className="text-gray-700">You or us, together referred to as 'Parties'.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Payment Terms</h4>
+                        <p className="text-gray-700">The payment terms set out in the CSA or otherwise agreed in writing signed by a director of ours.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Perm Placement</h4>
+                        <p className="text-gray-700">An Assignment where the Candidate is Engaged by you or an End User for regular employment, whether on a full or part time basis, not being a Temp Placement or a Temp Supply.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Privacy Notice</h4>
+                        <p className="text-gray-700">Our privacy notice made pursuant to the Data Laws from time to time.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">PSC</h4>
+                        <p className="text-gray-700">An intermediary which meets or is treated as meeting the conditions in s.61N(9)-(11) of the OPR.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">PSC Services</h4>
+                        <p className="text-gray-700">The services provided by a PSC under an Assignment.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Remuneration</h4>
+                        <p className="text-gray-700">Any payment for the services of the Candidate under an Engagement calculated in accordance with Section 3.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Representative</h4>
+                        <p className="text-gray-700">An individual who is a Candidate representing and working for a PSC in the provision of the PSC Services.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Requirement</h4>
+                        <p className="text-gray-700">A request from you in any form (whether oral or otherwise) for our Services.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">R.5 Rights</h4>
+                        <p className="text-gray-700">The rights an Agency Worker has to the same terms and conditions in force in your business relevant to others doing the same job, as set out in R.5 AWR.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">SDS</h4>
+                        <p className="text-gray-700">A status determination statement in the form required pursuant to the OPR.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Services</h4>
+                        <p className="text-gray-700">To locate, introduce and/or supply Candidates for you in accordance with your Requirements from time to time, Assignments and/or any Additional Service.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Social Media</h4>
+                        <p className="text-gray-700">Any electronic means of processing, viewing, obtaining or exchanging information or communications about persons through use of the internet or web based technologies/applications, electronic platforms or any telephonic (mobile or otherwise) messaging system.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Special Terms</h4>
+                        <p className="text-gray-700">Any Special Terms in the CSA.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Supplier</h4>
+                        <p className="text-gray-700">An employment business as referred to in the Conduct Regulations.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Tax Authority</h4>
+                        <p className="text-gray-700">A relevant authority, body or department responsible for collection of tax, national insurance, social security or any other charges, taxes or fees.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Temp Placement</h4>
+                        <p className="text-gray-700">An Assignment where the Candidate is Engaged by you or an End User on a temporary basis, not being a Perm Placement or a Temp Supply.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Temp Supply</h4>
+                        <p className="text-gray-700">The temporary supply to you of a Candidate who or which we employ or otherwise engage either directly or indirectly through a third party.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Total Cost</h4>
+                        <p className="text-gray-700">The total cost referred to in Fees 3 of the CSA.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Transfer Fee</h4>
+                        <p className="text-gray-700">The fee due to us provided for Introductions as referred to in Section 8.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Transfer Period</h4>
+                        <p className="text-gray-700">The period referred to as the Transfer Period in section 8.</p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-semibold text-primary-900 mb-2">Validation Period</h4>
+                        <p className="text-gray-700">The time interval specified in the CSA for validating work activity.</p>
+                      </div>
                     </div>
                   </div>
                 </div>
