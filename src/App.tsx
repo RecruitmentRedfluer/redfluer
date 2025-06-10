@@ -6,6 +6,7 @@ import Employers from './pages/Employers';
 import AboutUs from './pages/AboutUs';
 import NewsInsights from './pages/NewsInsights';
 import Contact from './pages/Contact';
+import Legal from './pages/Legal';
 import JobDetail from './pages/JobDetail';
 import Register from './pages/Register';
 import ApplyJob from './pages/ApplyJob';
@@ -26,6 +27,7 @@ function App() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/news" element={<NewsInsights />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/legal" element={<Legal />} />
         <Route path="/job/:id" element={<JobDetail />} />
         <Route path="/register" element={<Register />} />
         <Route path="/apply/:id" element={<ApplyJob />} />

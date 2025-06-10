@@ -58,6 +58,9 @@ const Footer: React.FC = () => {
               <li>
                 <Link to="/contact" className="text-gray-300 hover:text-white text-sm">Contact Us</Link>
               </li>
+              <li>
+                <Link to="/legal" className="text-gray-300 hover:text-white text-sm">Legal & Terms</Link>
+              </li>
             </ul>
           </div>
 
@@ -128,7 +131,10 @@ const Footer: React.FC = () => {
         {/* Copyright */}
         <div className="text-center text-sm text-gray-400">
           <p>&copy; {new Date().getFullYear()} RedFluer Recruitment Ltd. All rights reserved.</p>
-          <p className="mt-1">Registered in England and Wales | Website: www.redfluer.co.uk</p>
+          <p className="mt-1">
+            Registered in England and Wales | Company No: 16448519 | 
+            <Link to="/legal" className="text-gray-300 hover:text-white ml-1">Terms & Conditions</Link>
+          </p>
         </div>
       </div>
 
@@ -138,7 +144,7 @@ const Footer: React.FC = () => {
           <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
             <p className="text-sm text-gray-300 mb-4 md:mb-0">
               We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.
-              <Link to="/cookies" className="underline ml-1">Learn more</Link>
+              <Link to="/legal" className="underline ml-1">Learn more</Link>
             </p>
             <div className="flex space-x-4">
               <button 
