@@ -93,7 +93,7 @@ const Legal: React.FC = () => {
                     <div className="border-l-4 border-primary-500 pl-4">
                       <p className="text-gray-700">
                         <strong>6.</strong> Candidates we supply on a temporary basis are engaged by us on a contract for services unless 
-                        we inform you otherwise. As the Candidate's relationship is with us and you are not intended to be the Candidate's 
+                        we inform you otherwise. As the Candidate's relationship is with us and you are not intended to be the Candidate\'s 
                         employer, save for providing the Candidate with required information related to the work being done, you should 
                         refer any questions and relationship matters to us, not to the Candidate.
                       </p>
