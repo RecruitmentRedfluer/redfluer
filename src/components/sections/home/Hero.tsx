@@ -27,7 +27,7 @@ const Hero: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl text-white">
           <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
-            Welcome HOME
+            Welcome to Redfluer Recruitment
           </h1>
           <p className="text-lg md:text-xl mb-6 text-white/90">
             Specialists in Health Care & Care Services Recruitment and other related sectors
