@@ -3,7 +3,7 @@ import { Testimonial } from '../types';
 export const testimonials: Testimonial[] = [
   {
     id: '1',
-    name: 'Sarah Thompson',
+    name: 'Jack Peterson',
     role: 'Care Home Manager',
     company: 'Riverside Care Home',
     content: 'RedFluer Recruitment has consistently provided us with exceptional staff who truly care about our residents. Their thorough vetting process ensures we receive qualified professionals who align with our values.',
