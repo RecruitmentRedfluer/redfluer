@@ -26,9 +26,17 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center">
             <img 
-              src="/dist/assets/Redfluer Logo.png" 
+              src="/Redfluer Logo.png" 
               alt="RedFluer Recruitment Logo" 
               className="h-8 w-auto mr-2"
+              onError={(e) => {
+                // Fallback to a heart icon if logo fails to load
+                e.currentTarget.style.display = 'none';
+                const heartIcon = document.createElement('div');
+                heartIcon.innerHTML = '❤️';
+                heartIcon.className = 'w-8 h-8 text-primary-500 mr-2 flex items-center justify-center text-xl';
+                e.currentTarget.parentNode?.insertBefore(heartIcon, e.currentTarget);
+              }}
             />
             <span className="font-bold text-xl text-primary-900">RedFluer Recruitment</span>
           </Link>
