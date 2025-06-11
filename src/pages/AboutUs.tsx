@@ -121,7 +121,7 @@ const AboutUs: React.FC = () => {
                   alt="William Turner"
                   className="w-32 h-32 mx-auto rounded-full object-cover mb-4"
                 />
-                <h3 className="text-lg font-semibold text-primary-900">Sarah Johnson</h3>
+                <h3 className="text-lg font-semibold text-primary-900">Jack Jackson</h3>
                 <p className="text-primary-500 mb-3">Founder & CEO</p>
                 <p className="text-gray-600 text-sm">
                   Former NHS nurse with 15+ years of healthcare management experience.
