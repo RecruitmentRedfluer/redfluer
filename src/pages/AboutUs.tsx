@@ -43,7 +43,7 @@ const AboutUs: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <img 
-                src="https://images.pexels.com/photos/5699475/pexels-photo-5699475.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
+                src="https://cdn.redfluer.com/Screenshot%202025-06-11%20at%2017.05.21.png" 
                 alt="Healthcare professionals in a meeting"
                 className="rounded-lg shadow-md w-full h-64 object-cover"
               />
