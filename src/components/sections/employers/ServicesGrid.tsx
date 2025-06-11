@@ -20,7 +20,7 @@ const ServicesGrid: React.FC = () => {
             Our Healthcare Recruitment Services
           </h2>
           <p className="text-gray-600">
-            We offer a comprehensive range of specialized recruitment solutions designed to meet the unique needs of healthcare providers across the UK.
+            We offer a comprehensive range of specialised recruitment solutions designed to meet the unique needs of healthcare providers across the UK.
           </p>
         </div>
         
