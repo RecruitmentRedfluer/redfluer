@@ -130,7 +130,7 @@ const AboutUs: React.FC = () => {
               
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <img 
-                  src="https://images.pexels.com/photos/5673500/pexels-photo-5673500.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                  src="https://images.pexels.com/photos/5325105/pexels-photo-5325105.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
                   alt="David Thompson"
                   className="w-32 h-32 mx-auto rounded-full object-cover mb-4"
                 />
