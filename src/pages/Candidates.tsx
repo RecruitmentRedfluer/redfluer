@@ -189,7 +189,7 @@ const Candidates: React.FC = () => {
             <div className="bg-white p-6 rounded-lg shadow-md mb-6">
               <div className="flex flex-col md:flex-row items-start gap-4">
                 <img 
-                  src="https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                  src="https://images.pexels.com/photos/6010869/pexels-photo-6010869.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
                   alt="Nurse testimonial"
                   className="w-24 h-24 rounded-full object-cover"
                 />
