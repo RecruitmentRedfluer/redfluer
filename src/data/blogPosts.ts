@@ -26,7 +26,7 @@ export const blogPosts: BlogPost[] = [
     title: 'Navigating the New Care Quality Commission Standards',
     excerpt: 'What healthcare providers need to know about the latest CQC regulations and how they impact staffing requirements.',
     date: '2 April 2024',
-    author: 'Sarah Johnson',
+    author: 'Jack Johnson',
     category: 'Compliance',
     imageUrl: 'https://images.pexels.com/photos/6129500/pexels-photo-6129500.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     slug: 'cqc-standards',
