@@ -1,15 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Linkedin, Facebook, Twitter, Mail, Phone, MapPin, Clock, Instagram } from 'lucide-react';
 
 const Footer: React.FC = () => {
-  const [cookiesAccepted, setCookiesAccepted] = useState(false);
-
-  const acceptCookies = () => {
-    setCookiesAccepted(true);
-    localStorage.setItem('cookiesAccepted', 'true');
-  };
-
   return (
     <footer className="bg-primary-900 text-white pt-12 pb-6">
       <div className="container mx-auto px-4">
@@ -142,32 +135,6 @@ const Footer: React.FC = () => {
           </p>
         </div>
       </div>
-
-      {/* GDPR Cookie Notice */}
-      {!cookiesAccepted && (
-        <div className="fixed bottom-0 left-0 right-0 bg-primary-800 p-4 shadow-lg z-50">
-          <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
-            <p className="text-sm text-gray-300 mb-4 md:mb-0">
-              We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.
-              <Link to="/legal" className="underline ml-1">Learn more</Link>
-            </p>
-            <div className="flex space-x-4">
-              <button 
-                onClick={acceptCookies}
-                className="bg-white text-primary-900 px-4 py-2 text-sm font-medium rounded hover:bg-gray-100"
-              >
-                Accept
-              </button>
-              <button 
-                onClick={acceptCookies}
-                className="bg-transparent border border-white text-white px-4 py-2 text-sm font-medium rounded hover:bg-primary-700"
-              >
-                Decline
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </footer>
   );
 };
