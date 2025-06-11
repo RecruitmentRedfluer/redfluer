@@ -12,7 +12,7 @@ const Hero: React.FC = () => {
           muted
           loop
           playsInline
-          poster="https://images.pexels.com/photos/4225880/pexels-photo-4225880.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+          poster="https://images.pexels.com/photos/3938022/pexels-photo-3938022.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
         >
           <source
             src="https://player.vimeo.com/external/440137446.sd.mp4?s=e59b4270a6fe06f2598c5e5ffd9cad92bcbb2fa6&profile_id=164&oauth2_token_id=57447761"
