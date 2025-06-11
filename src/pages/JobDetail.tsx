@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { MapPin, Clock, Briefcase, Calendar } from 'lucide-react';
 import JobApplication from '../components/ui/JobApplication';
-import { getJobById } from '../lib/jobs';
+import { supabase } from '../lib/supabase';
+import { transformKeys } from '../lib/jobs';
 import type { JobPosting } from '../types';
 
 const JobDetail: React.FC = () => {
@@ -26,11 +27,30 @@ const JobDetail: React.FC = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await getJobById(jobId);
-      setJob(data);
+      
+      const { data, error: fetchError } = await supabase
+        .from('job_postings')
+        .select('*')
+        .eq('id', jobId)
+        .eq('is_active', true)
+        .single();
+
+      if (fetchError) {
+        if (fetchError.code === 'PGRST116') {
+          // No rows returned
+          setError('Job not found or no longer available.');
+        } else {
+          throw fetchError;
+        }
+        return;
+      }
+
+      // Transform snake_case keys to camelCase to match JobPosting interface
+      const transformedJob = transformKeys(data);
+      setJob(transformedJob);
     } catch (err) {
-      setError('Failed to load job details. Please try again later.');
       console.error('Error loading job:', err);
+      setError('Failed to load job details. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -71,6 +91,12 @@ const JobDetail: React.FC = () => {
               <p className="text-gray-600 mb-6">
                 Sorry, the job you're looking for doesn't exist or has been removed.
               </p>
+              <button
+                onClick={() => navigate('/candidates')}
+                className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-md"
+              >
+                Back to Jobs
+              </button>
             </div>
           </div>
         </div>
@@ -134,17 +160,22 @@ const JobDetail: React.FC = () => {
                   <li>Excellent communication and interpersonal skills</li>
                   <li>Ability to work as part of a team</li>
                   <li>Flexibility with working hours including possible weekend shifts</li>
+                  <li>Valid DBS check (we can assist with this if needed)</li>
+                  <li>Right to work in the UK</li>
                 </ul>
               </div>
               
               <div>
-                <h2 className="text-xl font-semibold text-primary-900 mb-3">Benefits</h2>
+                <h2 className="text-xl font-semibold text-primary-900 mb-3">What We Offer</h2>
                 <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                  <li>Competitive salary</li>
+                  <li>Competitive salary as advertised</li>
+                  <li>Weekly payment</li>
                   <li>Generous annual leave entitlement</li>
                   <li>Ongoing professional development opportunities</li>
+                  <li>24/7 support from our dedicated team</li>
                   <li>Pension scheme</li>
                   <li>Referral bonuses</li>
+                  <li>Flexible working arrangements where possible</li>
                 </ul>
               </div>
             </div>

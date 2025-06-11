@@ -1,23 +1,97 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-import { jobListings } from '../data/jobListings';
+import { supabase } from '../lib/supabase';
+import { transformKeys } from '../lib/jobs';
 import JobApplication from '../components/ui/JobApplication';
+import type { JobPosting } from '../types';
 
 const ApplyJob: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const job = jobListings.find(job => job.id === id);
-  
-  // If job not found, redirect to jobs page
-  React.useEffect(() => {
-    if (!job) {
+  const [job, setJob] = useState<JobPosting | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) {
       navigate('/candidates');
+      return;
     }
-  }, [job, navigate]);
-  
-  if (!job) {
-    return null; // Will redirect due to the useEffect above
+
+    loadJob(id);
+  }, [id, navigate]);
+
+  const loadJob = async (jobId: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const { data, error: fetchError } = await supabase
+        .from('job_postings')
+        .select('*')
+        .eq('id', jobId)
+        .eq('is_active', true)
+        .single();
+
+      if (fetchError) {
+        if (fetchError.code === 'PGRST116') {
+          // No rows returned
+          setError('Job not found or no longer available.');
+        } else {
+          throw fetchError;
+        }
+        return;
+      }
+
+      // Transform snake_case keys to camelCase to match JobPosting interface
+      const transformedJob = transformKeys(data);
+      setJob(transformedJob);
+    } catch (err) {
+      console.error('Error loading job:', err);
+      setError('Failed to load job details. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <p className="text-gray-600">Loading job details...</p>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error || !job) {
+    return (
+      <Layout pageTitle="Job Not Found">
+        <div className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-2xl font-bold text-primary-900 mb-4">
+                {error || 'Job Not Found'}
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Sorry, the job you're looking for doesn't exist or has been removed.
+              </p>
+              <button
+                onClick={() => navigate('/candidates')}
+                className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-md"
+              >
+                Back to Jobs
+              </button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
   }
 
   return (
@@ -48,7 +122,14 @@ const ApplyJob: React.FC = () => {
                 </div>
               </div>
               
-              <p className="text-gray-700">{job.description}</p>
+              <div className="mb-4">
+                <p className="text-sm text-gray-500 mb-2">Description</p>
+                <div className="text-gray-700 space-y-2">
+                  {job.description.split('\n').map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
+                </div>
+              </div>
             </div>
             
             <JobApplication jobId={job.id} jobTitle={job.title} />
