@@ -117,7 +117,7 @@ const AboutUs: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <img 
-                  src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
+                  src="https://images.pexels.com/photos/1579631/pexels-photo-1579631.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
                   alt="William Turner"
                   className="w-32 h-32 mx-auto rounded-full object-cover mb-4"
                 />
