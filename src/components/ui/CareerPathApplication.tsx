@@ -85,7 +85,7 @@ const CareerPathApplication: React.FC<CareerPathApplicationProps> = ({
       
       setSubmitMessage({
         type: 'success',
-        text: 'Your career path application has been submitted successfully! Our career advisors will review it and contact you to discuss your personalized development plan.'
+        text: 'Your career path application has been submitted successfully! Our career advisors will review it and contact you to discuss your personalised development plan.'
       });
       
       // Reset form
