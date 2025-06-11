@@ -113,7 +113,7 @@ const Employers: React.FC = () => {
               </div>
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="font-semibold text-primary-900 mb-2">Nursing Homes</h3>
-                <p className="text-sm text-gray-600">Specialized care home staffing</p>
+                <p className="text-sm text-gray-600">Specialised care home staffing</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="font-semibold text-primary-900 mb-2">Mental Health Units</h3>
