@@ -17,7 +17,7 @@ export const testimonials: Testimonial[] = [
     company: 'Central Hospital Trust',
     content: 'Working with RedFluer has transformed our staffing process. Their understanding of our specific needs has helped us fill critical positions quickly with high-quality nursing professionals.',
     videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    imageUrl: 'https://images.pexels.com/photos/5407206/pexels-photo-5407206.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    imageUrl: 'https://images.pexels.com/photos/5327871/pexels-photo-5327871.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
   },
   {
     id: '3',
