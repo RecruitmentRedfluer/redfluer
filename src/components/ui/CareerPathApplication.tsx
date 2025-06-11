@@ -64,30 +64,20 @@ const CareerPathApplication: React.FC<CareerPathApplicationProps> = ({
     
     try {
       const { error } = await supabase
-        .from('contact_submissions')
+        .from('career_path_applications')
         .insert([
           {
+            career_path_id: pathId,
             name: formValues.name,
             email: formValues.email,
             phone: formValues.phone || null,
-            message: `CAREER PATH APPLICATION
-            
-Career Path: ${pathTitle}
-From: ${currentRole}
-To: ${targetRole}
-Salary Increase: ${salaryIncrease}
-Time to Complete: ${timeToComplete}
-Required Skills: ${requiredSkills.join(', ')}
-Path ID: ${pathId}
-
-Current Position: ${formValues.currentPosition}
-Experience: ${formValues.experience}
-Current Skills: ${formValues.currentSkills}
-Career Goals: ${formValues.careerGoals}
-Time Commitment: ${formValues.timeCommitment}
-Preferred Start Date: ${formValues.preferredStartDate}
-
-Additional Message: ${formValues.message}`
+            current_position: formValues.currentPosition,
+            experience: formValues.experience,
+            current_skills: formValues.currentSkills,
+            career_goals: formValues.careerGoals,
+            time_commitment: formValues.timeCommitment,
+            preferred_start_date: formValues.preferredStartDate,
+            message: formValues.message || null
           }
         ]);
       

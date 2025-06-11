@@ -60,27 +60,18 @@ const SkillApplication: React.FC<SkillApplicationProps> = ({
     
     try {
       const { error } = await supabase
-        .from('contact_submissions')
+        .from('skill_applications')
         .insert([
           {
+            skill_id: skillId,
             name: formValues.name,
             email: formValues.email,
             phone: formValues.phone || null,
-            message: `SKILL TRAINING APPLICATION
-            
-Skill: ${skillName}
-Category: ${category}
-Duration: ${duration || 'Not specified'}
-Provider: ${provider || 'Not specified'}
-Earns Premium: ${earnsPremium ? 'Yes' : 'No'}${earnsPremium && premiumRate ? ` (${premiumRate})` : ''}
-Skill ID: ${skillId}
-
-Current Role: ${formValues.currentRole}
-Experience: ${formValues.experience}
-Motivation: ${formValues.motivation}
-Preferred Schedule: ${formValues.preferredSchedule}
-
-Additional Message: ${formValues.message}`
+            current_role: formValues.currentRole,
+            experience: formValues.experience,
+            motivation: formValues.motivation,
+            preferred_schedule: formValues.preferredSchedule,
+            message: formValues.message || null
           }
         ]);
       
