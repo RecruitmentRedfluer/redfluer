@@ -17,7 +17,7 @@ const FounderMessage: React.FC = () => {
                 "Our approach combines deep industry knowledge with a genuine understanding of the human element of care work. We're not just filling vacancies – we're supporting careers and improving care standards across the UK."
               </p>
               <p className="font-semibold text-primary-900">
-                - Sarah Johnson, Founder & CEO
+                - Mike Jackson, Founder & CEO
               </p>
             </div>
           </div>
