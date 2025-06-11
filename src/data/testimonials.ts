@@ -26,6 +26,6 @@ export const testimonials: Testimonial[] = [
     company: 'Bellevue Care Services',
     content: 'The team at RedFluer truly understand the healthcare sector. Their ability to source qualified, compassionate professionals has been invaluable to our organization\'s growth and success.',
     videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    imageUrl: 'https://images.pexels.com/photos/7551443/pexels-photo-7551443.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    imageUrl: 'https://images.pexels.com/photos/5867737/pexels-photo-5867737.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
   },
 ];
