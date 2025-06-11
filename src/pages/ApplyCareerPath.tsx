@@ -152,7 +152,7 @@ const ApplyCareerPath: React.FC = () => {
               <div className="mb-8">
                 <h2 className="text-xl font-semibold text-primary-900 mb-3">What's Included</h2>
                 <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                  <li>Personalized career development plan</li>
+                  <li>Personalised career development plan</li>
                   <li>Access to all required training programs</li>
                   <li>One-on-one mentoring with experienced professionals</li>
                   <li>Regular progress reviews and feedback sessions</li>
