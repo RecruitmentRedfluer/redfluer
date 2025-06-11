@@ -46,7 +46,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
       <p className="text-gray-700 mb-4">{job.description}</p>
       
       <div className="flex justify-between items-center">
-        <Button to={`/job/${job.id}`} variant="outline" size="sm">
+        <Button to={`/apply/${job.id}`} variant="outline" size="sm">
           View Details
         </Button>
         <Button to={`/apply/${job.id}`} variant="primary" size="sm">

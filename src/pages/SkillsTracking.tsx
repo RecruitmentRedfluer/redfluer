@@ -348,7 +348,7 @@ const SkillsTracking: React.FC = () => {
                               View Certificate
                             </Button>
                           )}
-                          <Button variant="outline" size="sm">
+                          <Button to={`/apply-skill/${skill.id}`} variant="outline" size="sm">
                             View Details
                           </Button>
                         </div>
@@ -421,9 +421,14 @@ const SkillsTracking: React.FC = () => {
                           </div>
                           <div className="text-center">
                             <p className="text-sm text-gray-500 mb-3">Time to complete: {path.timeToComplete}</p>
-                            <Button to={`/apply-career-path/${path.id}`} variant="primary" size="sm" fullWidth>
-                              Apply for This Path
-                            </Button>
+                            <div className="space-y-2">
+                              <Button to={`/apply-career-path/${path.id}`} variant="primary" size="sm" fullWidth>
+                                Apply for This Path
+                              </Button>
+                              <Button to={`/apply-career-path/${path.id}`} variant="outline" size="sm" fullWidth>
+                                View Details
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>

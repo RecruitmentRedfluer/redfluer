@@ -223,7 +223,7 @@ const ShiftManagement: React.FC = () => {
                     )}
                     
                     <div className="flex justify-between items-center">
-                      <Button variant="outline" size="sm">
+                      <Button to={`/apply-shift/${shift.id}`} variant="outline" size="sm">
                         View Details
                       </Button>
                       <Button to={`/apply-shift/${shift.id}`} variant="primary" size="sm">
