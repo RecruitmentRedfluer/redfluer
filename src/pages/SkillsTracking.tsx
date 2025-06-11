@@ -437,7 +437,7 @@ const SkillsTracking: React.FC = () => {
                     Need a Custom Career Path?
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    Our career advisors can create a personalized development plan based on your current skills, career goals, and preferred timeline.
+                    Our career advisors can create a personalised development plan based on your current skills, career goals, and preferred timeline.
                   </p>
                   <Button variant="primary" size="md">
                     Book Career Consultation
