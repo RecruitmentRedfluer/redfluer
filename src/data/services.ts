@@ -4,7 +4,7 @@ export const services: ServiceItem[] = [
   {
     id: '1',
     title: 'Learning Disabilities Care',
-    description: 'kefmfkjenfejkfejknfejknfnje',
+    description: 'Specialised staffing for learning disability services with trained professionals who understand the unique needs of service users.',
     icon: 'users',
   },
   {
