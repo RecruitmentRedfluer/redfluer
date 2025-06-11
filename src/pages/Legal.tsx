@@ -1234,7 +1234,7 @@ const Legal: React.FC = () => {
                   <p>RedFluer Recruitment Limited</p>
                   <p>45 Broad Lane, London, N15 4DJ</p>
                   <p>Company Registration: 16448519</p>
-                  <p>Email: info@redfluer.com | Phone: 0800 123 4567</p>
+                  <p>Email: info@redfluer.com | Phone: +44 7999 423861</p>
                 </div>
               </div>
             </div>
