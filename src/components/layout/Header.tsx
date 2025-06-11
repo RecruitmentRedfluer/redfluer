@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Heart } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Button from '../ui/Button';
 
 const Header: React.FC = () => {
@@ -25,7 +25,11 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center">
-            <Heart className="w-8 h-8 text-primary-500 mr-2" fill="#0078D4" strokeWidth={1.5} />
+            <img 
+              src="/dist/assets/Redfluer Logo.png" 
+              alt="RedFluer Recruitment Logo" 
+              className="h-8 w-auto mr-2"
+            />
             <span className="font-bold text-xl text-primary-900">RedFluer Recruitment</span>
           </Link>
 
