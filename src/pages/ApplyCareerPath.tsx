@@ -131,7 +131,7 @@ const ApplyCareerPath: React.FC = () => {
                       with a potential salary increase of {careerPath.salaryIncrease}.
                     </p>
                     <p className="text-success-600 text-sm">
-                      Our career advisors will work with you to create a personalized development plan and provide ongoing support throughout your journey.
+                      Our career advisors will work with you to create a personalised development plan and provide ongoing support throughout your journey.
                     </p>
                   </div>
                 </div>
