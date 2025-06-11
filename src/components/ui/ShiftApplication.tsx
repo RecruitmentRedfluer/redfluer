@@ -52,24 +52,17 @@ const ShiftApplication: React.FC<ShiftApplicationProps> = ({
     
     try {
       const { error } = await supabase
-        .from('contact_submissions')
+        .from('shift_applications')
         .insert([
           {
+            shift_id: shiftId,
             name: formValues.name,
             email: formValues.email,
             phone: formValues.phone || null,
-            message: `SHIFT APPLICATION
-            
-Shift: ${shiftTitle}
-Facility: ${facilityName}
-Rate: £${hourlyRate}/hour
-Shift ID: ${shiftId}
-
-Availability: ${formValues.availability}
-Experience: ${formValues.experience}
-Qualifications: ${formValues.qualifications}
-
-Additional Message: ${formValues.message}`
+            availability: formValues.availability,
+            experience: formValues.experience,
+            qualifications: formValues.qualifications,
+            message: formValues.message || null
           }
         ]);
       
