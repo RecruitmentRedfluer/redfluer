@@ -21,7 +21,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: '3',
-    name: 'Emma Davies',
+    name: 'Mike Townley',
     role: 'Operations Director',
     company: 'Bellevue Care Services',
     content: 'The team at RedFluer truly understand the healthcare sector. Their ability to source qualified, compassionate professionals has been invaluable to our organization\'s growth and success.',
