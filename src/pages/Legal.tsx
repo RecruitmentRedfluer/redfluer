@@ -28,7 +28,7 @@ const Legal: React.FC = () => {
                   Once you have received this CSA, any act by you of accepting or requesting services from us or using in any way information from us relating to a Candidate, is deemed to be and shall constitute your acceptance of these Terms which then apply.
                 </p>
                 <p className="text-gray-700">
-                  You may view our Privacy Notice at www.refluerrecruitment.co.uk
+                  You may view our Privacy Notice at www.redfluer.com
                 </p>
               </div>
 
