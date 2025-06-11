@@ -121,7 +121,7 @@ const Candidates: React.FC = () => {
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <Users className="w-10 h-10 text-primary-500 mx-auto mb-3" />
                 <h3 className="font-semibold text-primary-900 mb-2">Learning Disabilities</h3>
-                <p className="text-sm text-gray-600">Specialized care for individuals with learning disabilities</p>
+                <p className="text-sm text-gray-600">Specialised care for individuals with learning disabilities</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <Shield className="w-10 h-10 text-primary-500 mx-auto mb-3" />
