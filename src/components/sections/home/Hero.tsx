@@ -3,7 +3,7 @@ import Button from '../../ui/Button';
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative h-[70vh] min-h-[500px] flex items-center">
+    <section className="relative h-[70vh] min-h-[500px] flex items-center pt-16 md:pt-0">
       {/* Video Background */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
         <video
