@@ -1,12 +1,11 @@
 import React from 'react';
-import VideoEmbed from '../../ui/VideoEmbed';
 
 const FounderMessage: React.FC = () => {
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="grid grid-cols-1 gap-8">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-primary-900 mb-4">
                 A Message from Our Founder
@@ -20,12 +19,6 @@ const FounderMessage: React.FC = () => {
               <p className="font-semibold text-primary-900">
                 - Sarah Johnson, Founder & CEO
               </p>
-            </div>
-            <div>
-              <VideoEmbed 
-                url="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-                title="Founder Message - RedFluer Recruitment" 
-              />
             </div>
           </div>
         </div>

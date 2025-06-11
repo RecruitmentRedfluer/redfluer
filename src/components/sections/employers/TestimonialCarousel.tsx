@@ -1,6 +1,5 @@
 import React from 'react';
 import Carousel from '../../ui/Carousel';
-import VideoEmbed from '../../ui/VideoEmbed';
 import { testimonials } from '../../../data/testimonials';
 
 const TestimonialCarousel: React.FC = () => {
@@ -33,11 +32,7 @@ const TestimonialCarousel: React.FC = () => {
                         <p className="text-gray-600 text-sm">{testimonial.role}, {testimonial.company}</p>
                       </div>
                     </div>
-                    <p className="text-gray-700 mb-6 italic">"{testimonial.content}"</p>
-                    <VideoEmbed 
-                      url={testimonial.videoUrl} 
-                      title={`${testimonial.name} Testimonial`} 
-                    />
+                    <p className="text-gray-700 italic">"{testimonial.content}"</p>
                   </div>
                 </div>
               </div>
