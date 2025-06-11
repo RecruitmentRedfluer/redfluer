@@ -32,7 +32,7 @@ const Employers: React.FC = () => {
               <div className="bg-primary-50 p-6 rounded-lg border border-primary-100 text-center">
                 <Users className="w-10 h-10 text-primary-500 mx-auto mb-3" />
                 <h3 className="font-semibold text-primary-900 mb-2">Learning Disabilities</h3>
-                <p className="text-sm text-gray-600">Specialized staff for learning disability services</p>
+                <p className="text-sm text-gray-600">Specialised staff for learning disability services</p>
               </div>
               <div className="bg-primary-50 p-6 rounded-lg border border-primary-100 text-center">
                 <Shield className="w-10 h-10 text-primary-500 mx-auto mb-3" />
