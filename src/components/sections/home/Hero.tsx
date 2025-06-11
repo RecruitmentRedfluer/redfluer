@@ -41,7 +41,7 @@ const Hero: React.FC = () => {
             <Button to="/candidates" variant="primary" size="lg">
               Find Shifts Near You
             </Button>
-            <Button to="/employers" variant="white" size="lg">
+            <Button to="/employers" variant="secondary" size="lg">
               Hire Quality Staff
             </Button>
           </div>
