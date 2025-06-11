@@ -37,13 +37,8 @@ const ThreeStepProcess: React.FC = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md text-center relative">
+              <div key={index} className="bg-white p-6 rounded-lg shadow-md text-center">
                 <div className="flex justify-center mb-4">{step.icon}</div>
-                <div className="relative mb-6">
-                  <div className="absolute left-1/2 -bottom-6 transform -translate-x-1/2 w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold">
-                    {index + 1}
-                  </div>
-                </div>
                 <h3 className="text-xl font-semibold text-primary-900 mb-3">
                   {index + 1}. {step.title}
                 </h3>
