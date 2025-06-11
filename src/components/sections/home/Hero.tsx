@@ -41,7 +41,7 @@ const Hero: React.FC = () => {
             <Button to="/candidates" variant="primary" size="lg">
               Find Shifts Near You
             </Button>
-            <Button to="/employers" variant="white" size="lg">
+            <Button to="/employers" variant="outline" size="lg" className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white hover:text-primary-900">
               Hire Quality Staff
             </Button>
           </div>
