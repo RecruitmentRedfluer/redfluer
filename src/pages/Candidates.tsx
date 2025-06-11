@@ -197,7 +197,7 @@ const Candidates: React.FC = () => {
                   <p className="text-gray-700 italic mb-4">
                     "RedFluer's platform made it so easy to find shifts near my home that matched my mental health nursing qualifications. The upskilling guidance helped me understand exactly what I needed to access higher-paying specialist dementia roles."
                   </p>
-                  <p className="font-semibold text-primary-900">Emma Williams, Mental Health Nurse</p>
+                  <p className="font-semibold text-primary-900">Arthur Jones, Mental Health Nurse</p>
                   <p className="text-gray-600 text-sm">Now working specialist dementia shifts in London</p>
                 </div>
               </div>
