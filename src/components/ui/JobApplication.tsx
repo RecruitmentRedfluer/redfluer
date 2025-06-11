@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import Button from './Button';
+import FileUpload from './FileUpload';
 
 interface JobApplicationProps {
   jobId: string;
@@ -12,6 +13,7 @@ interface FormValues {
   email: string;
   phone: string;
   coverLetter: string;
+  cvFile: File | null;
 }
 
 const JobApplication: React.FC<JobApplicationProps> = ({ jobId, jobTitle }) => {
@@ -20,6 +22,7 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, jobTitle }) => {
     email: '',
     phone: '',
     coverLetter: '',
+    cvFile: null,
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,11 +36,50 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, jobTitle }) => {
     }));
   };
 
+  const handleFileSelect = (file: File | null) => {
+    setFormValues(prev => ({
+      ...prev,
+      cvFile: file
+    }));
+  };
+
+  const uploadFile = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `job-applications/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('File upload error:', uploadError);
+        return null;
+      }
+
+      return filePath;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
+      let cvUrl = null;
+      
+      // Upload CV file if provided
+      if (formValues.cvFile) {
+        cvUrl = await uploadFile(formValues.cvFile);
+        if (!cvUrl) {
+          throw new Error('Failed to upload CV file. Please try again.');
+        }
+      }
+
       const { error } = await supabase
         .from('job_applications')
         .insert([
@@ -46,7 +88,8 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, jobTitle }) => {
             name: formValues.name,
             email: formValues.email,
             phone: formValues.phone || null,
-            cover_letter: formValues.coverLetter
+            cover_letter: formValues.coverLetter,
+            cv_url: cvUrl
           }
         ]);
       
@@ -62,13 +105,14 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, jobTitle }) => {
         name: '',
         email: '',
         phone: '',
-        coverLetter: ''
+        coverLetter: '',
+        cvFile: null
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting application:', error);
       setSubmitMessage({
         type: 'error',
-        text: 'There was an error submitting your application. Please try again later.'
+        text: error.message || 'There was an error submitting your application. Please try again later.'
       });
     } finally {
       setIsSubmitting(false);
@@ -96,35 +140,37 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, jobTitle }) => {
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name *
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            required
-            value={formValues.name}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email Address *
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            required
-            value={formValues.email}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-          />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name *
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              value={formValues.name}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              value={formValues.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
         </div>
         
         <div>
@@ -142,28 +188,30 @@ const JobApplication: React.FC<JobApplicationProps> = ({ jobId, jobTitle }) => {
         </div>
         
         <div>
+          <FileUpload
+            onFileSelect={handleFileSelect}
+            currentFile={formValues.cvFile}
+            label="CV/Resume"
+            acceptedTypes=".pdf,.doc,.docx,.txt,.rtf"
+            maxSizeMB={10}
+            required={false}
+          />
+        </div>
+        
+        <div>
           <label htmlFor="coverLetter" className="block text-sm font-medium text-gray-700 mb-1">
             Cover Letter *
           </label>
           <textarea
             id="coverLetter"
             name="coverLetter"
-            rows={5}
+            rows={6}
             required
             value={formValues.coverLetter}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
             placeholder="Tell us why you're interested in this position and what makes you a great fit..."
           ></textarea>
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            CV/Resume (Coming soon)
-          </label>
-          <p className="text-sm text-gray-500 mb-2">
-            File upload functionality will be available soon. For now, please mention your experience in the cover letter.
-          </p>
         </div>
         
         <Button

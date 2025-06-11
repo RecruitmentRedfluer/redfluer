@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import Button from './Button';
+import FileUpload from './FileUpload';
 
 interface SkillApplicationProps {
   skillId: string;
@@ -21,6 +22,7 @@ interface FormValues {
   motivation: string;
   preferredSchedule: string;
   message: string;
+  documentsFile: File | null;
 }
 
 const SkillApplication: React.FC<SkillApplicationProps> = ({ 
@@ -41,6 +43,7 @@ const SkillApplication: React.FC<SkillApplicationProps> = ({
     motivation: '',
     preferredSchedule: '',
     message: '',
+    documentsFile: null,
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,11 +57,50 @@ const SkillApplication: React.FC<SkillApplicationProps> = ({
     }));
   };
 
+  const handleFileSelect = (file: File | null) => {
+    setFormValues(prev => ({
+      ...prev,
+      documentsFile: file
+    }));
+  };
+
+  const uploadFile = async (file: File): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `skill-applications/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('File upload error:', uploadError);
+        return null;
+      }
+
+      return filePath;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
+      let documentsUrl = null;
+      
+      // Upload documents file if provided
+      if (formValues.documentsFile) {
+        documentsUrl = await uploadFile(formValues.documentsFile);
+        if (!documentsUrl) {
+          throw new Error('Failed to upload documents. Please try again.');
+        }
+      }
+
       const { error } = await supabase
         .from('skill_applications')
         .insert([
@@ -71,7 +113,8 @@ const SkillApplication: React.FC<SkillApplicationProps> = ({
             experience: formValues.experience,
             motivation: formValues.motivation,
             preferred_schedule: formValues.preferredSchedule,
-            message: formValues.message || null
+            message: formValues.message || null,
+            documents_url: documentsUrl
           }
         ]);
       
@@ -91,13 +134,14 @@ const SkillApplication: React.FC<SkillApplicationProps> = ({
         experience: '',
         motivation: '',
         preferredSchedule: '',
-        message: ''
+        message: '',
+        documentsFile: null
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting application:', error);
       setSubmitMessage({
         type: 'error',
-        text: 'There was an error submitting your application. Please try again later.'
+        text: error.message || 'There was an error submitting your application. Please try again later.'
       });
     } finally {
       setIsSubmitting(false);
@@ -153,7 +197,7 @@ const SkillApplication: React.FC<SkillApplicationProps> = ({
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -268,6 +312,17 @@ const SkillApplication: React.FC<SkillApplicationProps> = ({
             <option value="flexible">Flexible</option>
             <option value="intensive">Intensive (consecutive days)</option>
           </select>
+        </div>
+        
+        <div>
+          <FileUpload
+            onFileSelect={handleFileSelect}
+            currentFile={formValues.documentsFile}
+            label="Supporting Documents (CV, Certificates, etc.)"
+            acceptedTypes=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt,.rtf"
+            maxSizeMB={10}
+            required={false}
+          />
         </div>
         
         <div>
