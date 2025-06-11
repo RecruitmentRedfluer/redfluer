@@ -152,7 +152,7 @@ const ApplySkill: React.FC = () => {
                 <ul className="list-disc pl-5 space-y-2 text-gray-700">
                   <li>Professional certification upon completion</li>
                   <li>Enhanced career prospects in healthcare</li>
-                  <li>Access to specialized shift opportunities</li>
+                  <li>Access to specialised shift opportunities</li>
                   {skill.earnsPremium && <li>Qualification for premium rate shifts</li>}
                   <li>Ongoing support from our training team</li>
                   <li>Flexible training schedule options</li>
